@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -23,6 +24,32 @@ var _ = queue.DefaultConfig
 // maxBatchPublish is the maximum number of messages accepted in a single
 // batch-publish request.  This matches the plan spec of 100.
 const maxBatchPublish = 100
+
+// Metadata limits — enforced on every publish path.
+const (
+	metaMaxKeys     = 16  // max number of key/value pairs
+	metaMaxKeyBytes = 64  // max bytes per key
+	metaMaxValBytes = 512 // max bytes per value
+)
+
+// validateMetadata returns a non-nil error if m violates any metadata limit.
+func validateMetadata(m map[string]string) error {
+	if len(m) > metaMaxKeys {
+		return fmt.Errorf("metadata: too many keys (max %d)", metaMaxKeys)
+	}
+	for k, v := range m {
+		if len(k) == 0 {
+			return errors.New("metadata: key must not be empty")
+		}
+		if len(k) > metaMaxKeyBytes {
+			return fmt.Errorf("metadata: key too long (max %d bytes)", metaMaxKeyBytes)
+		}
+		if len(v) > metaMaxValBytes {
+			return fmt.Errorf("metadata: value too long (max %d bytes)", metaMaxValBytes)
+		}
+	}
+	return nil
+}
 
 // validName returns true when name is safe to use as a path component.
 // It rejects strings that are empty, too long, or that could be used for
@@ -217,6 +244,11 @@ func (h *Handler) publishMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validateMetadata(req.Metadata); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+
 	body, err := base64.StdEncoding.DecodeString(req.Body)
 	if err != nil {
 		// Treat non-base64 as raw UTF-8 bytes.
@@ -257,6 +289,10 @@ func (h *Handler) publishBatch(w http.ResponseWriter, r *http.Request) {
 
 	ids := make([]string, 0, len(reqs))
 	for _, req := range reqs {
+		if err := validateMetadata(req.Metadata); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+			return
+		}
 		body, err := base64.StdEncoding.DecodeString(req.Body)
 		if err != nil {
 			body = []byte(req.Body)

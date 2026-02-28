@@ -125,7 +125,7 @@ func Default() *Config {
 			MaxBatchSize:               100,
 			DefaultBatchSize:           1,
 			MaxMessages:                100_000,
-			MaxRetries:                 3,
+			MaxRetries:                 5,
 			RetentionPeriod:            "7d",
 			MaxScheduleAhead:           "90d",
 		},

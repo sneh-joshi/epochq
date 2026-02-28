@@ -54,7 +54,9 @@ queue:
 
   # max_retries: delivery attempts before a message moves to the DLQ.
   # Set to 0 to disable retries (move to DLQ on first failure).
-  max_retries: 3
+  # 5 retries × 30s visibility timeout = up to 150s window to recover from
+  # transient failures (e.g. a downstream service restarting) before DLQ.
+  max_retries: 5
 
   # retention_period: automatically delete messages older than this.
   retention_period: "7d"
@@ -99,7 +101,7 @@ dashboard:
 
 webhook:
   # retry_delays_ms: how long to wait between successive webhook retry attempts.
-  # 3 retries with these delays = ~36 seconds total before moving to DLQ.
+  # 3 delays = ~36 seconds total before the webhook subscription stops retrying.
   retry_delays_ms: [1000, 5000, 30000]
   # timeout_ms: HTTP timeout for each webhook call.
   timeout_ms: 5000

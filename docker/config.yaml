@@ -23,7 +23,7 @@ queue:
   max_batch_size: 100
   default_batch_size: 1
   max_messages: 100000
-  max_retries: 3
+  max_retries: 5
   retention_period: "7d"
   max_schedule_ahead: "90d"
 

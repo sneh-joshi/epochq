@@ -40,8 +40,8 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		DefaultVisibilityTimeoutMs: 30_000, // 30 seconds
+		MaxRetries:                 5,
 		MaxMessages:                100_000,
-		MaxRetries:                 3,
 		MaxMessageSizeKB:           256,
 		MaxBatchSize:               100,
 	}

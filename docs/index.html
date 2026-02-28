@@ -648,16 +648,16 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
       <span class="stat-label">scheduled message peek</span>
     </div>
     <div class="stat-item">
-      <span class="stat-value">50k</span>
-      <span class="stat-label">msgs/sec (single node)</span>
+      <span class="stat-value">15k</span>
+      <span class="stat-label">msgs/sec (single node, est.)</span>
     </div>
     <div class="stat-item">
-      <span class="stat-value">~20 MB</span>
+      <span class="stat-value">~8 MB</span>
       <span class="stat-label">Docker image</span>
     </div>
     <div class="stat-item">
-      <span class="stat-value">±10 ms</span>
-      <span class="stat-label">delivery accuracy</span>
+      <span class="stat-value">±15 ms</span>
+      <span class="stat-label">delivery accuracy (Linux)</span>
     </div>
     <div class="stat-item">
       <span class="stat-value">0</span>
@@ -691,7 +691,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
         <li>Native <code>deliver_at</code> — any future UTC millisecond</li>
         <li>Configurable scheduling window (default 90 days)</li>
         <li>Language-agnostic HTTP + WebSocket API</li>
-        <li>Single binary, zero dependencies, ~20 MB image</li>
+        <li>Single binary, zero dependencies, ~8 MB image</li>
         <li>Runs on 512 MB RAM</li>
         <li>Durable WAL + bbolt index — survives restarts</li>
       </ul>
@@ -996,32 +996,95 @@ go build -o epochq ./cmd/server
 <!-- ─── PERFORMANCE ─── -->
 <section id="performance">
   <p class="section-label">Performance</p>
-  <h2 class="section-title">Built for production.<br>Honest about limits.</h2>
-  <p class="section-sub">Single-node numbers on commodity hardware. Phase 2 adds Raft clustering.</p>
+  <h2 class="section-title">Built for production.</h2>
+  <p class="section-sub">Single-node numbers. Throughput varies significantly by environment — these are <strong style="color:var(--warn)">estimated ranges</strong>.</p>
 
   <div class="table-wrap">
     <table class="perf-table">
       <thead>
         <tr>
           <th>Metric</th>
-          <th>Value</th>
+          <th style="color:var(--cyan)">Linux VPS<br><span style="font-size:10px;text-transform:none;letter-spacing:0;font-weight:400">(2–4 vCPU, shared SSD)</span></th>
+          <th style="color:var(--muted)">Docker Desktop<br><span style="font-size:10px;text-transform:none;letter-spacing:0;font-weight:400">(macOS / Windows VM)</span></th>
           <th>Notes</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Write throughput (fsync=interval)</td><td class="ok">~50,000 msgs/sec</td><td class="muted">Default config</td></tr>
-        <tr><td>Write throughput (fsync=never)</td><td class="ok">~500,000 msgs/sec</td><td class="muted">Lossy mode</td></tr>
-        <tr><td>Read throughput</td><td class="ok">~100,000 msgs/sec</td><td class="muted">—</td></tr>
-        <tr><td>Scheduled heap size</td><td class="ok">10M entries ≈ 1 GB RAM</td><td class="muted">In-memory Min-Heap</td></tr>
-        <tr><td>Delivery accuracy</td><td class="ok">±10 ms</td><td class="muted">OS timer resolution</td></tr>
-        <tr><td>Cluster delivery accuracy</td><td class="warn">±500 ms</td><td class="muted">Phase 2 — NTP recommended</td></tr>
-        <tr><td>Maximum connections</td><td class="ok">~65,000 TCP</td><td class="muted">OS limit</td></tr>
-        <tr><td>In-memory index @ 10 GB RAM</td><td class="ok">~100M messages</td><td class="muted">bbolt index cache</td></tr>
-        <tr><td>Docker image size</td><td class="ok">~20 MB</td><td class="muted">Multi-stage distroless</td></tr>
-        <tr><td>Minimum RAM</td><td class="ok">512 MB</td><td class="muted">Comfortably runs on free tier VMs</td></tr>
+        <tr>
+          <td>Write throughput (fsync=interval)</td>
+          <td style="color:var(--cyan)">~15,000 msgs/sec</td>
+          <td class="muted">~4,000 msgs/sec</td>
+          <td class="muted">Default config. Bottleneck: WAL fsync + disk I/O.</td>
+        </tr>
+        <tr>
+          <td>Write throughput (fsync=never)</td>
+          <td style="color:var(--cyan)">~80,000 msgs/sec</td>
+          <td class="muted">~4,000 msgs/sec</td>
+          <td class="muted">Lossy mode — no durability guarantee on crash.</td>
+        </tr>
+        <tr>
+          <td>Read throughput</td>
+          <td style="color:var(--cyan)">~30,000 msgs/sec</td>
+          <td class="muted">~2,000 msgs/sec</td>
+          <td class="muted">50 concurrent consumers, batch=100.</td>
+        </tr>
+        <tr>
+          <td>Delivery accuracy</td>
+          <td style="color:var(--cyan)">±15–30 ms</td>
+          <td class="muted">±50–200 ms</td>
+          <td class="muted">VM timer jitter dominates on Docker Desktop.</td>
+        </tr>
+        <tr>
+          <td>Scheduled heap size</td>
+          <td colspan="2" class="ok" style="text-align:center">1M entries ≈ ~100 MB RAM</td>
+          <td class="muted">In-memory Min-Heap. Linear with entry count.</td>
+        </tr>
+        <tr>
+          <td>Maximum connections</td>
+          <td colspan="2" class="ok" style="text-align:center">~65,000 TCP</td>
+          <td class="muted">OS ulimit — not an EpochQ limit.</td>
+        </tr>
+        <tr>
+          <td>In-memory index @ 10 GB RAM</td>
+          <td colspan="2" class="ok" style="text-align:center">~100M messages</td>
+          <td class="muted">bbolt page cache.</td>
+        </tr>
+        <tr>
+          <td>Docker image size</td>
+          <td colspan="2" class="ok" style="text-align:center">~8 MB</td>
+          <td class="muted">Multi-stage scratch build. Measured.</td>
+        </tr>
+        <tr>
+          <td>Minimum RAM</td>
+          <td colspan="2" class="ok" style="text-align:center">512 MB</td>
+          <td class="muted">Runs comfortably on free-tier VMs.</td>
+        </tr>
+        <tr>
+          <td>Max message size</td>
+          <td colspan="2" class="ok" style="text-align:center">256 KB</td>
+          <td class="muted">Configurable via <code>max_message_size_kb</code>. Matches SQS's limit — for larger payloads, store data in object storage and pass a reference ID in the message body.</td>
+        </tr>
+        <tr>
+          <td>Max messages per queue</td>
+          <td colspan="2" class="ok" style="text-align:center">100,000</td>
+          <td class="muted">Default cap. Configurable via <code>max_messages</code> per queue.</td>
+        </tr>
+        <tr>
+          <td>Max batch size (consume)</td>
+          <td colspan="2" class="ok" style="text-align:center">100 msgs</td>
+          <td class="muted">Max messages returned per <code>Consume</code> call. Configurable via <code>max_batch_size</code>.</td>
+        </tr>
+        <tr>
+          <td>Message metadata</td>
+          <td colspan="2" class="ok" style="text-align:center">≤16 keys · key ≤64 B · value ≤512 B</td>
+          <td class="muted">String key/value pairs attached at publish time. Use for routing hints, trace IDs, or tags. Enforced at publish — rejected with 400 if exceeded.</td>
+        </tr>
       </tbody>
     </table>
   </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:14px;text-align:center">
+    * All throughput numbers are <em>estimated</em>. Write numbers: 50 concurrent producers, batch size 100, measured over 30 seconds. Read numbers: 50 concurrent consumers, batch size 100. Docker Desktop numbers measured on macOS with Apple Silicon.
+  </p>
 </section>
 <hr class="divider">
 

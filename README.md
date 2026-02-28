@@ -193,7 +193,7 @@ metrics:
 
 queue:
   default_visibility_timeout_ms: 30000
-  max_retries: 3
+  max_retries: 5
   max_messages: 100000
 ```
 
