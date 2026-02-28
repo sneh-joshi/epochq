@@ -40,7 +40,7 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md). We are committ
 ## Getting the code
 
 ```bash
-git clone https://github.com/snehjoshi/epochq
+git clone https://github.com/sneh-joshi/epochq
 cd epochq
 go mod download
 ```
@@ -168,7 +168,7 @@ test(client): add TestStatsPaged covering paginated stats SDK method
 
 ## Reporting bugs
 
-Open a [GitHub Issue](https://github.com/snehjoshi/epochq/issues/new) and include:
+Open a [GitHub Issue](https://github.com/sneh-joshi/epochq/issues/new) and include:
 
 - EpochQ version (`/health` → `version` field)
 - OS / architecture
@@ -180,7 +180,7 @@ Open a [GitHub Issue](https://github.com/snehjoshi/epochq/issues/new) and includ
 
 ## Requesting features
 
-Open a [GitHub Issue](https://github.com/snehjoshi/epochq/issues/new) with the label `enhancement`. Describe:
+Open a [GitHub Issue](https://github.com/sneh-joshi/epochq/issues/new) with the label `enhancement`. Describe:
 
 - The use case / problem you are solving
 - Your proposed solution (optional)

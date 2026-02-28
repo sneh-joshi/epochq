@@ -23,15 +23,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/config"
-	"github.com/snehjoshi/epochq/internal/dlq"
-	"github.com/snehjoshi/epochq/internal/metrics"
-	"github.com/snehjoshi/epochq/internal/namespace"
-	"github.com/snehjoshi/epochq/internal/node"
-	"github.com/snehjoshi/epochq/internal/queue"
-	"github.com/snehjoshi/epochq/internal/scheduler"
-	"github.com/snehjoshi/epochq/internal/storage"
-	"github.com/snehjoshi/epochq/internal/storage/local"
+	"github.com/sneh-joshi/epochq/internal/config"
+	"github.com/sneh-joshi/epochq/internal/dlq"
+	"github.com/sneh-joshi/epochq/internal/metrics"
+	"github.com/sneh-joshi/epochq/internal/namespace"
+	"github.com/sneh-joshi/epochq/internal/node"
+	"github.com/sneh-joshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochq/internal/scheduler"
+	"github.com/sneh-joshi/epochq/internal/storage"
+	"github.com/sneh-joshi/epochq/internal/storage/local"
 )
 
 // ─── Error sentinels ──────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ import (
 	"time"
 
 	gorillaws "github.com/gorilla/websocket"
-	"github.com/snehjoshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/broker"
 )
 
 // urlParse is an alias so the upgrader closure can call it without shadowing

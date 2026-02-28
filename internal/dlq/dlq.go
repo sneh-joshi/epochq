@@ -15,7 +15,7 @@ package dlq
 import (
 	"fmt"
 
-	"github.com/snehjoshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochq/internal/queue"
 )
 
 // Manager provides dead-letter queue operations on top of a queue.Manager.

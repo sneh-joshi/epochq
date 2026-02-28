@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/snehjoshi/epochq/internal/namespace"
+	"github.com/sneh-joshi/epochq/internal/namespace"
 )
 
 func tempDir(t *testing.T) string {

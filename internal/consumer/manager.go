@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/broker"
-	"github.com/snehjoshi/epochq/internal/node"
+	"github.com/sneh-joshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/node"
 )
 
 var ErrSubscriptionNotFound = errors.New("consumer: subscription not found")

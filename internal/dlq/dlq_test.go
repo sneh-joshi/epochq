@@ -4,11 +4,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/snehjoshi/epochq/internal/dlq"
-	"github.com/snehjoshi/epochq/internal/node"
-	"github.com/snehjoshi/epochq/internal/queue"
-	"github.com/snehjoshi/epochq/internal/storage"
-	"github.com/snehjoshi/epochq/internal/storage/local"
+	"github.com/sneh-joshi/epochq/internal/dlq"
+	"github.com/sneh-joshi/epochq/internal/node"
+	"github.com/sneh-joshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochq/internal/storage"
+	"github.com/sneh-joshi/epochq/internal/storage/local"
 )
 
 func newFactory(baseDir string) queue.EngineFactory {

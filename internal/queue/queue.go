@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/node"
-	"github.com/snehjoshi/epochq/internal/storage"
+	"github.com/sneh-joshi/epochq/internal/node"
+	"github.com/sneh-joshi/epochq/internal/storage"
 )
 
 // ─── Per-queue config ─────────────────────────────────────────────────────────

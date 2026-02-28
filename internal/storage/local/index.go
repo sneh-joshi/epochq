@@ -7,8 +7,8 @@ import (
 
 	"go.etcd.io/bbolt"
 
-	"github.com/snehjoshi/epochq/internal/storage"
-	"github.com/snehjoshi/epochq/internal/types"
+	"github.com/sneh-joshi/epochq/internal/storage"
+	"github.com/sneh-joshi/epochq/internal/types"
 )
 
 var (

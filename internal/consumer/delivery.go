@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/snehjoshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochq/internal/queue"
 )
 
 // webhookPayload is the JSON body POSTed to the webhook URL.

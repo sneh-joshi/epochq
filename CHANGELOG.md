@@ -115,5 +115,5 @@ EpochQ uses [Semantic Versioning](https://semver.org/).
 
 ---
 
-[Unreleased]: https://github.com/snehjoshi/epochq/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/snehjoshi/epochq/releases/tag/v1.0.0
+[Unreleased]: https://github.com/sneh-joshi/epochq/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/sneh-joshi/epochq/releases/tag/v1.0.0

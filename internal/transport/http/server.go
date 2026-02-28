@@ -30,12 +30,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/broker"
-	"github.com/snehjoshi/epochq/internal/config"
-	"github.com/snehjoshi/epochq/internal/consumer"
-	"github.com/snehjoshi/epochq/internal/metrics"
-	"github.com/snehjoshi/epochq/internal/namespace"
-	transportws "github.com/snehjoshi/epochq/internal/transport/websocket"
+	"github.com/sneh-joshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/config"
+	"github.com/sneh-joshi/epochq/internal/consumer"
+	"github.com/sneh-joshi/epochq/internal/metrics"
+	"github.com/sneh-joshi/epochq/internal/namespace"
+	transportws "github.com/sneh-joshi/epochq/internal/transport/websocket"
 )
 
 //go:embed static/index.html

@@ -6,7 +6,7 @@ EpochQ is a lightweight, self-hostable message queue server built for developers
 
 [![Go](https://img.shields.io/badge/Go-1.24-blue)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Website](https://img.shields.io/badge/website-epochq.dev-7c5cfc)](https://snehjoshi.github.io/epochq)
+[![Website](https://img.shields.io/badge/website-epochq.dev-7c5cfc)](https://sneh-joshi.github.io/epochq)
 
 ---
 
@@ -44,7 +44,7 @@ EpochQ is a lightweight, self-hostable message queue server built for developers
 ### Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/snehjoshi/epochq
+git clone https://github.com/sneh-joshi/epochq
 cd epochq/docker
 docker compose up -d
 ```
@@ -98,7 +98,7 @@ curl -s -X POST "$BASE/messages/<receipt_handle>/nack"
 ## Go SDK
 
 ```go
-import "github.com/snehjoshi/epochq/pkg/client"
+import "github.com/sneh-joshi/epochq/pkg/client"
 
 c := client.New("http://localhost:8080",
     client.WithAPIKey("your-secret"),  // omit when auth is disabled

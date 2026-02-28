@@ -11,7 +11,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/snehjoshi/epochq/internal/types"
+	"github.com/sneh-joshi/epochq/internal/types"
 )
 
 // walMagic is the 4-byte header written at the start of every wal.dat file.

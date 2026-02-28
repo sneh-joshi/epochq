@@ -14,8 +14,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/snehjoshi/epochq/internal/storage"
-	"github.com/snehjoshi/epochq/internal/types"
+	"github.com/sneh-joshi/epochq/internal/storage"
+	"github.com/sneh-joshi/epochq/internal/types"
 )
 
 // logVersion identifies the binary format written to log.dat.

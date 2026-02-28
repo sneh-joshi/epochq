@@ -18,13 +18,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/broker"
-	"github.com/snehjoshi/epochq/internal/config"
-	"github.com/snehjoshi/epochq/internal/consumer"
-	"github.com/snehjoshi/epochq/internal/metrics"
-	"github.com/snehjoshi/epochq/internal/namespace"
-	"github.com/snehjoshi/epochq/internal/node"
-	transphttp "github.com/snehjoshi/epochq/internal/transport/http"
+	"github.com/sneh-joshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/config"
+	"github.com/sneh-joshi/epochq/internal/consumer"
+	"github.com/sneh-joshi/epochq/internal/metrics"
+	"github.com/sneh-joshi/epochq/internal/namespace"
+	"github.com/sneh-joshi/epochq/internal/node"
+	transphttp "github.com/sneh-joshi/epochq/internal/transport/http"
 )
 
 func main() {

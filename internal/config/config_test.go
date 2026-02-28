@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/snehjoshi/epochq/internal/config"
+	"github.com/sneh-joshi/epochq/internal/config"
 )
 
 func TestDefault_HasSensibleValues(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/scheduler"
+	"github.com/sneh-joshi/epochq/internal/scheduler"
 )
 
 // ─── helpers ─────────────────────────────────────────────────────────────────

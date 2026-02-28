@@ -16,7 +16,7 @@ This guide gets you from zero to running a EpochQ server and publishing your fir
 ### Option A — Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/snehjoshi/epochq
+git clone https://github.com/sneh-joshi/epochq
 cd epochq/docker
 docker compose up -d
 ```
@@ -24,7 +24,7 @@ docker compose up -d
 ### Option B — Build from source
 
 ```bash
-git clone https://github.com/snehjoshi/epochq
+git clone https://github.com/sneh-joshi/epochq
 cd epochq
 go build -o epochq ./cmd/server
 ./epochq --config config.yaml
@@ -141,7 +141,7 @@ The message will not appear in consume calls until the `deliver_at` time is reac
 ## 6. Use the Go SDK
 
 ```bash
-go get github.com/snehjoshi/epochq/pkg/client
+go get github.com/sneh-joshi/epochq/pkg/client
 ```
 
 ```go
@@ -154,7 +154,7 @@ import (
     "log"
     "time"
 
-    "github.com/snehjoshi/epochq/pkg/client"
+    "github.com/sneh-joshi/epochq/pkg/client"
 )
 
 func main() {

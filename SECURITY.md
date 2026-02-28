@@ -15,7 +15,7 @@ If you discover a security vulnerability, report it privately so it can be patch
 
 **How to report:**
 
-1. Open a [GitHub Security Advisory](https://github.com/snehjoshi/epochq/security/advisories/new) (preferred).
+1. Open a [GitHub Security Advisory](https://github.com/sneh-joshi/epochq/security/advisories/new) (preferred).
 2. Or send an email with details — include "EpochQ Security" in the subject line.
 
 **What to include:**

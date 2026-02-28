@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/broker"
-	"github.com/snehjoshi/epochq/internal/config"
-	"github.com/snehjoshi/epochq/internal/consumer"
-	"github.com/snehjoshi/epochq/internal/metrics"
-	"github.com/snehjoshi/epochq/internal/namespace"
-	transphttp "github.com/snehjoshi/epochq/internal/transport/http"
-	"github.com/snehjoshi/epochq/pkg/client"
+	"github.com/sneh-joshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/config"
+	"github.com/sneh-joshi/epochq/internal/consumer"
+	"github.com/sneh-joshi/epochq/internal/metrics"
+	"github.com/sneh-joshi/epochq/internal/namespace"
+	transphttp "github.com/sneh-joshi/epochq/internal/transport/http"
+	"github.com/sneh-joshi/epochq/pkg/client"
 )
 
 // ─── test server helpers ──────────────────────────────────────────────────────

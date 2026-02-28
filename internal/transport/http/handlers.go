@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/broker"
-	"github.com/snehjoshi/epochq/internal/consumer"
-	"github.com/snehjoshi/epochq/internal/namespace"
-	"github.com/snehjoshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochq/internal/broker"
+	"github.com/sneh-joshi/epochq/internal/consumer"
+	"github.com/sneh-joshi/epochq/internal/namespace"
+	"github.com/sneh-joshi/epochq/internal/queue"
 )
 
 // Compile-time check that queue is used (avoid "imported and not used" error

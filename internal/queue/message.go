@@ -6,7 +6,7 @@
 // any source changes.
 package queue
 
-import "github.com/snehjoshi/epochq/internal/types"
+import "github.com/sneh-joshi/epochq/internal/types"
 
 // Re-export core domain types from the types package.
 // Using Go type aliases (=) so queue.Message IS types.Message — no conversion needed.

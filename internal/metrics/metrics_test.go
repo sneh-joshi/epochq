@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/snehjoshi/epochq/internal/metrics"
+	"github.com/sneh-joshi/epochq/internal/metrics"
 )
 
 // ─── labelCounter ─────────────────────────────────────────────────────────────
