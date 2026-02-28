@@ -34,7 +34,7 @@ EpochQ is a lightweight, self-hostable message queue server built for developers
 - **Auth** — static API key (`X-Api-Key` header)
 - **Prometheus metrics** — `/metrics` endpoint on port 9090
 - **Built-in dashboard** — `/dashboard` with live queue depths
-- **Single binary** — no runtime dependencies, ~20 MB Docker image
+- **Single binary** — no runtime dependencies, ~8 MB Docker image
 - **Go SDK** — idiomatic client for producers and consumers
 
 ---
@@ -225,16 +225,18 @@ epochq_http_request_duration_milliseconds_count{method,path}
 
 ---
 
-## Performance (single node)
+## Performance (single node, estimated)
 
-| Metric | Value |
+Numbers below are for a Linux VPS (2–4 vCPU, shared SSD). Docker Desktop (macOS/Windows) is lower due to VM overhead — expect ~4,000 msgs/sec write and ~2,000 msgs/sec read.
+
+| Metric | Linux VPS (est.) |
 |---|---|
-| Write throughput (fsync=interval) | ~50,000 msgs/sec |
-| Write throughput (fsync=never) | ~500,000 msgs/sec |
-| Read throughput | ~100,000 msgs/sec |
-| Scheduled message heap | 10M entries ≈ 1 GB RAM |
+| Write throughput (fsync=interval) | ~15,000 msgs/sec |
+| Write throughput (fsync=never) | ~80,000 msgs/sec |
+| Read throughput | ~30,000 msgs/sec |
+| Scheduled message heap | 1M entries ≈ ~100 MB RAM |
 | Min-heap peek latency | O(1) |
-| Delivery accuracy | ±10 ms (OS timer resolution) |
+| Delivery accuracy | ±15–30 ms |
 
 ---
 
