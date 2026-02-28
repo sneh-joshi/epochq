@@ -280,16 +280,6 @@ epochq/
 
 ---
 
-## Roadmap
-
-| Phase | Status | Description |
-|---|---|---|
-| Phase 1 — Single Node | ✅ Complete | HTTP API, WAL storage, scheduler, DLQ, auth, metrics, dashboard |
-| Phase 2 — Raft Cluster | 🔜 Planned | 3-node consensus, automatic failover, leader-only scheduler |
-| Phase 3 — Sharding | 🔜 Planned | Consistent-hash routing across multiple clusters |
-
----
-
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
