@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EpochQ — The queue that replaces your cron jobs</title>
+  <meta name="description" content="Lightweight, self-hostable message queue with native scheduled delivery. Schedule messages at any future timestamp. Single binary. Zero dependencies." />
+  <meta property="og:title" content="EpochQ — The queue that replaces your cron jobs" />
+  <meta property="og:description" content="Schedule messages at any future UTC millisecond. Built in Go. Self-hostable. Zero dependencies." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱</text></svg>" />
+  <style>
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --border:   #30363d;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --accent:   #7c5cfc;
+      --accent2:  #a371f7;
+      --ok:       #3fb950;
+      --warn:     #d29922;
+      --danger:   #f85149;
+      --teal:     #39d353;
+      --cyan:     #58a6ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span {
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .15s;
+      text-decoration: none !important;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center;
+      padding: 100px 5% 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,92,252,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,92,252,.15);
+      border: 1px solid rgba(124,92,252,.35);
+      color: var(--accent2);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      letter-spacing: .04em;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 800;
+      line-height: 1.1;
+      max-width: 780px;
+      margin: 0 auto 20px;
+      letter-spacing: -.025em;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent2), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 72px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { text-align: center; }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      display: block;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 80px 5%;
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+
+    /* ─── WHY ─── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .compare-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .compare-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .compare-card li {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+    }
+    .compare-card li::before { content: ''; flex-shrink: 0; margin-top: 6px; }
+    .bad li::before { content: '✗'; color: var(--danger); margin-top: 0; font-size: 13px; }
+    .good li::before { content: '✓'; color: var(--ok); margin-top: 0; font-size: 13px; }
+    .benefits-strip {
+      margin-top: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+    }
+    .benefits-strip h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .benefits-strip ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px 16px;
+    }
+    .benefits-strip li {
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .benefits-strip li::before {
+      content: '✓';
+      color: var(--ok);
+      font-size: 13px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    /* ─── FEATURES ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(124,92,252,.5);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+    /* ─── HOW IT WORKS ─── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    @media (max-width: 760px) { .how-grid { grid-template-columns: 1fr; } }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .step {
+      display: flex;
+      gap: 18px;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(124,92,252,.15);
+      border: 1px solid rgba(124,92,252,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent2);
+      flex-shrink: 0;
+    }
+    .step-body h4 { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+    .step-body p { font-size: 14px; color: var(--muted); }
+
+    /* ─── CODE BLOCKS ─── */
+    .code-window {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .code-title-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot-row { display: flex; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+    .code-body {
+      padding: 20px;
+      font-size: 13.5px;
+      line-height: 1.65;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .hero .code-window,
+    .hero .code-title-bar,
+    .hero .code-body {
+      text-align: left;
+    }
+    .hero .code-body {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .kw { color: #ff7b72; }
+    .fn { color: #d2a8ff; }
+    .str { color: #a5d6ff; }
+    .cmt { color: var(--muted); }
+    .num { color: #79c0ff; }
+    .type { color: #ffa657; }
+    .var { color: #e6edf3; }
+
+    /* ─── TABS ─── */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: none;
+      transition: all .15s;
+    }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ─── BIGQUOTE ─── */
+    .big-quote {
+      text-align: center;
+      padding: 70px 5%;
+      background: linear-gradient(135deg, rgba(124,92,252,.06), rgba(88,166,255,.05));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .big-quote blockquote {
+      font-size: clamp(20px, 3vw, 32px);
+      font-weight: 700;
+      line-height: 1.35;
+      max-width: 780px;
+      margin: 0 auto 14px;
+      letter-spacing: -.01em;
+    }
+    .big-quote cite {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    /* ─── PERF TABLE ─── */
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .perf-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .perf-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(48,54,61,.5);
+    }
+    .perf-table tr:last-child td { border-bottom: none; }
+    .perf-table tr:hover td { background: rgba(255,255,255,.02); }
+    .perf-table .ok { color: var(--ok); font-weight: 600; }
+    .perf-table .warn { color: var(--warn); }
+    .perf-table .muted { color: var(--muted); }
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* ─── QUICKSTART ─── */
+    .qs-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .qs-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .qs-num {
+      width: 28px;
+      height: 28px;
+      background: rgba(124,92,252,.15);
+      border: 1px solid rgba(124,92,252,.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent2);
+      flex-shrink: 0;
+    }
+    .qs-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+
+    /* ─── USE CASES ─── */
+    .uc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .uc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .uc-icon { font-size: 24px; flex-shrink: 0; margin-top: 1px; }
+    .uc-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+    .uc-body p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .uc-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-family: monospace;
+      background: rgba(124,92,252,.12);
+      color: var(--accent2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 7px;
+    }
+
+    /* ─── ROADMAP ─── */
+    .roadmap-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .roadmap-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .phase-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .phase-done { background: rgba(63,185,80,.12); color: var(--ok); border: 1px solid rgba(63,185,80,.3); }
+    .phase-next { background: rgba(210,153,34,.1); color: var(--warn); border: 1px solid rgba(210,153,34,.28); }
+    .phase-future { background: rgba(139,148,158,.1); color: var(--muted); border: 1px solid var(--border); }
+    .roadmap-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .roadmap-text p { font-size: 13px; color: var(--muted); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 5%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 32px;
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+    .footer-brand h3 {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .footer-brand p { font-size: 13px; color: var(--muted); max-width: 260px; }
+    .footer-links h5 { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-links li a { font-size: 14px; color: var(--muted); }
+    .footer-links li a:hover { color: var(--text); text-decoration: none; }
+    .footer-bottom {
+      text-align: center;
+      padding: 20px 5%;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ─── INLINE BADGE ─── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+    .pill-go { background: rgba(88,166,255,.12); color: var(--cyan); border: 1px solid rgba(88,166,255,.25); }
+    .pill-mit { background: rgba(63,185,80,.1); color: var(--ok); border: 1px solid rgba(63,185,80,.25); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a class="nav-logo" href="#">⏱ <span>EpochQ</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#quickstart">Quick start</a></li>
+    <li><a href="#use-cases">Use cases</a></li>
+    <li><a href="https://github.com/snehjoshi/epochq/blob/main/docs/api-reference.md">API Docs</a></li>
+  </ul>
+  <div style="display:flex;gap:10px">
+    <a class="btn btn-ghost" href="https://github.com/snehjoshi/epochq">
+      <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <a class="btn btn-primary" href="#quickstart">Get started →</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<div class="hero">
+  <div class="badge">⏱ Time-native message queue</div>
+  <h1>The queue that <span class="gradient">replaces your cron jobs</span></h1>
+  <p>Schedule messages at any future UTC millisecond. Built in Go. Single binary. Self-hostable. Zero dependencies.</p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="#quickstart">Get started in 60s →</a>
+    <a class="btn btn-ghost" href="https://github.com/snehjoshi/epochq">View on GitHub</a>
+  </div>
+
+  <div style="margin: 48px auto 0; max-width: 680px;">
+    <div class="code-window">
+      <div class="code-title-bar">
+        <div class="dot-row"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+        <span style="margin-left:8px">Schedule a message with curl</span>
+      </div>
+      <div class="code-body"><span class="cmt"># Schedule a payment reminder in 24 hours</span>
+curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/messages" \
+  -H "Content-Type: application/json" \
+  -d "{\"body\":\"eyJ1c2VySWQiOjEyM30=\",\"deliver_at\":$(( $(date +%s%3N) + 86400000 ))}"
+
+<span class="cmt"># Response: {"id":"01JP5X4PRJ3G2V9WB8E7KT8M5F"}</span>
+<span class="cmt"># Delivery: at or after the given UTC millisecond timestamp.</span></div>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-value">O(1)</span>
+      <span class="stat-label">scheduled message peek</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">50k</span>
+      <span class="stat-label">msgs/sec (single node)</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">~20 MB</span>
+      <span class="stat-label">Docker image</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">±10 ms</span>
+      <span class="stat-label">delivery accuracy</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">0</span>
+      <span class="stat-label">runtime dependencies</span>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+
+<!-- ─── WHY EPOCHQ ─── -->
+<section id="why">
+  <p class="section-label">Why EpochQ</p>
+  <h2 class="section-title">Traditional scheduling needed workarounds.<br>EpochQ makes scheduling first-class.</h2>
+  <p class="section-sub">Until now, delayed and time-based workflows usually required multiple moving parts. EpochQ brings them into one simple queueing model.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h4>❌ Traditional approach</h4>
+      <ul>
+        <li>Separate scheduler jobs and queue workers to maintain</li>
+        <li>Frequent polling loops that grow cost with load</li>
+        <li>Multiple services and extra operational complexity</li>
+        <li>Delivery windows and timing limits in delay workflows</li>
+        <li>Language- or stack-specific tooling constraints</li>
+        <li>More glue code for retries, timeouts, and reliability</li>
+      </ul>
+    </div>
+    <div class="compare-card good">
+      <h4>✅ The EpochQ way</h4>
+      <ul>
+        <li>Native <code>deliver_at</code> — any future UTC millisecond</li>
+        <li>Configurable scheduling window (default 90 days)</li>
+        <li>Language-agnostic HTTP + WebSocket API</li>
+        <li>Single binary, zero dependencies, ~20 MB image</li>
+        <li>Runs on 512 MB RAM</li>
+        <li>Durable WAL + bbolt index — survives restarts</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="benefits-strip">
+    <h4>Why EpochQ instead of a separate scheduler service?</h4>
+    <ul>
+      <li>One API for immediate and delayed work</li>
+      <li>Fewer moving parts to deploy and monitor</li>
+      <li>Lower latency than polling-based scheduler loops</li>
+      <li>Built-in retry, visibility timeout, and DLQ flow</li>
+    </ul>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── FEATURES ─── -->
+<section id="features">
+  <p class="section-label">Features</p>
+  <h2 class="section-title">Everything a production queue needs. Nothing it doesn't.</h2>
+  <p class="section-sub">Built ground-up in Go. No dependencies, no configuration sprawl.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⏱</span>
+      <h3>Native scheduled delivery</h3>
+      <p>Set <code>deliver_at</code> to any future UTC millisecond. An in-memory Min-Heap (O(1) peek, O(log N) insert) fires messages precisely when due — no database polling loop.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <h3>At-least-once delivery</h3>
+      <p>Visibility timeouts lock messages while in-flight. If your consumer crashes without ACKing, the message becomes ready again automatically.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💀</span>
+      <h3>Dead-letter queue</h3>
+      <p>Every queue gets a paired DLQ. Failed messages land there after <code>max_retries</code>. Inspect and replay with a single API call.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <h3>Three consumer models</h3>
+      <p>HTTP poll, WebSocket push (with backpressure), or Webhook delivery — pick what fits your architecture. Mix and match per queue.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📦</span>
+      <h3>Durable storage</h3>
+      <p>Append-only WAL + bbolt index. Crash-safe: EpochQ replays the WAL on restart to restore all in-memory state exactly as it was.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>Built-in dashboard</h3>
+      <p>Live queue depths, scheduled counts, DLQ alerts, pagination for 500+ queues. Create queues, send messages, replay DLQ — all from the browser.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔭</span>
+      <h3>Prometheus metrics</h3>
+      <p>Published, consumed, ACKed, NACKed, DLQ-routed counters per queue. HTTP request latency histograms. Scrape from port 9090.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔑</span>
+      <h3>Auth + rate limiting</h3>
+      <p>Static API key via <code>X-Api-Key</code> header. Per-IP token-bucket rate limiter and request body size cap built in.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🚀</span>
+      <h3>Cluster-ready by design</h3>
+      <p>WAL format carries Raft <code>term</code> + <code>log_index</code> fields from day one. Phase 2 adds 3-node Raft consensus without a storage format change.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── BIG QUOTE ─── -->
+<div class="big-quote">
+  <blockquote>"Send email 1 hour after signup? Schedule a payment retry in 24 hours? Cancel an order in 30 minutes? That's one <code style="font-size:.75em;background:rgba(124,92,252,.15);padding:2px 8px;border-radius:4px">deliver_at</code>."</blockquote>
+  <cite>— Stop writing cron jobs. Start publishing messages.</cite>
+</div>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how-it-works">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">Min-Heap scheduling.<br>O(1) peek. Always.</h2>
+  <p class="section-sub">Traditional solutions poll the database every second. EpochQ knows exactly when the next message is due and sleeps until that moment.</p>
+
+  <div class="how-grid">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Publish with deliver_at</h4>
+          <p>Set <code>deliver_at</code> to a UTC millisecond timestamp. If it's in the future, the message enters the scheduler's Min-Heap. If immediate, it goes straight to the READY queue.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Scheduler fires at exactly the right time</h4>
+          <p>A background goroutine peeks at the heap root (O(1)) and sleeps until that timestamp. On fire, it pops the message and pushes it to READY.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Consumer receives the message</h4>
+          <p>Your consumer polls, subscribes via WebSocket, or receives a webhook POST. The message is locked with a visibility timeout.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>ACK or retry</h4>
+          <p>Call <code>DELETE /messages/:receipt_handle</code> to ACK. Call <code>POST .../nack</code> to requeue. Exhaust retries and it moves to the DLQ.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="code-window">
+        <div class="code-title-bar">
+          <div class="dot-row"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="margin-left:8px">Go SDK</span>
+          <span class="pill pill-go" style="margin-left:auto">Go</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">"github.com/snehjoshi/epochq/pkg/client"</span>
+
+c := client.New(<span class="str">"http://localhost:8080"</span>)
+
+<span class="cmt">// Publish immediately</span>
+id, _ := c.Publish(ctx, <span class="str">"payments"</span>, <span class="str">"invoices"</span>,
+  payload)
+
+<span class="cmt">// Schedule in 1 hour</span>
+id, _ = c.Publish(ctx, <span class="str">"payments"</span>, <span class="str">"invoices"</span>,
+  payload,
+  client.WithDelay(<span class="num">time.Hour</span>))
+
+<span class="cmt">// Schedule at an exact time</span>
+id, _ = c.Publish(ctx, <span class="str">"payments"</span>, <span class="str">"invoices"</span>,
+  payload,
+  client.WithDeliverAt(monday9am))
+
+<span class="cmt">// Consume + ACK</span>
+msgs, _ := c.Consume(ctx, <span class="str">"payments"</span>, <span class="str">"invoices"</span>, <span class="num">10</span>)
+<span class="kw">for</span> _, m := <span class="kw">range</span> msgs {
+  process(m.Body)
+  c.Ack(ctx, m.ReceiptHandle)
+}</div>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── QUICKSTART ─── -->
+<section id="quickstart">
+  <p class="section-label">Quick start</p>
+  <h2 class="section-title">Running in under 60 seconds.</h2>
+  <p class="section-sub">Docker Compose is the fastest path. A single binary works just as well.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <div class="qs-steps">
+      <div class="qs-step">
+        <div class="qs-num">1</div>
+        <div class="qs-body">
+          <h4>Clone &amp; start</h4>
+          <div class="code-window">
+            <div class="code-body" style="padding:14px 16px;font-size:13px">git clone https://github.com/snehjoshi/epochq
+cd epochq/docker
+docker compose up -d</div>
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">2</div>
+        <div class="qs-body">
+          <h4>Open the dashboard</h4>
+          <div class="code-window">
+            <div class="code-body" style="padding:14px 16px;font-size:13px">open http://localhost:8080/dashboard</div>
+          </div>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">3</div>
+        <div class="qs-body">
+          <h4>Publish your first scheduled message</h4>
+          <div class="code-window">
+            <div class="code-body" style="padding:14px 16px;font-size:13px">curl -X POST \\
+  http://localhost:8080/namespaces/demo/queues/jobs/messages \\
+  -H "Content-Type: application/json" \\
+  -d '{"body":"aGVsbG8gd29ybGQ=",
+       "deliver_at":<span class="fn">$(( $(date +%s%3N)+60000 ))</span>}'</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">↑ Delivers in 60 seconds from now.</p>
+        </div>
+      </div>
+      <div class="qs-step">
+        <div class="qs-num">4</div>
+        <div class="qs-body">
+          <h4>Add the Go SDK</h4>
+          <div class="code-window">
+            <div class="code-body" style="padding:14px 16px;font-size:13px">go get github.com/snehjoshi/epochq/pkg/client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="code-window">
+        <div class="code-title-bar">
+          <div class="dot-row"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="margin-left:8px">docker-compose.yml</span>
+        </div>
+        <div class="code-body"><span class="kw">services</span>:
+  <span class="fn">epochq</span>:
+    <span class="type">image</span>: epochq:latest  <span class="cmt"># local image until registry release</span>
+    <span class="type">ports</span>:
+      - <span class="str">"8080:8080"</span>   <span class="cmt"># API + dashboard</span>
+      - <span class="str">"9090:9090"</span>   <span class="cmt"># Prometheus metrics</span>
+    <span class="type">volumes</span>:
+      - <span class="str">./data:/data</span>
+      - <span class="str">./config.yaml:/config.yaml</span>
+    <span class="type">environment</span>:
+      - EPOCHQ_AUTH_API_KEY=<span class="str">your-secret</span></div>
+      </div>
+
+      <div style="margin-top:16px" class="code-window">
+        <div class="code-title-bar">
+          <div class="dot-row"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="margin-left:8px">Or build from source</span>
+        </div>
+        <div class="code-body">git clone https://github.com/snehjoshi/epochq
+cd epochq
+go build -o epochq ./cmd/server
+./epochq --config config.yaml</div>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── USE CASES ─── -->
+<section id="use-cases">
+  <p class="section-label">Use cases</p>
+  <h2 class="section-title">One queue. Dozens of cron job patterns eliminated.</h2>
+  <p class="section-sub">Any task that runs "later" is a candidate.</p>
+
+  <div class="uc-grid">
+    <div class="uc-card">
+      <div class="uc-icon">📧</div>
+      <div class="uc-body">
+        <h4>Onboarding email sequence</h4>
+        <p>Publish welcome email jobs with <code>deliver_at</code> spaced 1 day, 3 days, 7 days after signup. No cron, no DB polling.</p>
+        <span class="uc-tag">WithDelay(24 * time.Hour)</span>
+      </div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">💳</div>
+      <div class="uc-body">
+        <h4>Payment retry</h4>
+        <p>After a failed charge, schedule a retry in 24 hours. If that fails, schedule another at 72 hours. No scheduler service needed.</p>
+        <span class="uc-tag">WithDelay(24 * time.Hour)</span>
+      </div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">🛒</div>
+      <div class="uc-body">
+        <h4>Abandoned cart recovery</h4>
+        <p>At checkout start, publish a reminder message for 30 minutes later. Cancel it if the order completes — or let it fire and send the nudge.</p>
+        <span class="uc-tag">WithDelay(30 * time.Minute)</span>
+      </div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">📝</div>
+      <div class="uc-body">
+        <h4>Scheduled content publishing</h4>
+        <p>Publish a "go live" job for a blog post at exactly 9 AM Monday. No CMS flag polling, no cron expression debugging.</p>
+        <span class="uc-tag">WithDeliverAt(monday9am)</span>
+      </div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">🔄</div>
+      <div class="uc-body">
+        <h4>Subscription renewal</h4>
+        <p>When a subscription is created, publish a renewal job for 3 days before expiry. When the job fires, publish the next one.</p>
+        <span class="uc-tag">WithDeliverAt(expiryDate - 3 days)</span>
+      </div>
+    </div>
+    <div class="uc-card">
+      <div class="uc-icon">📬</div>
+      <div class="uc-body">
+        <h4>Rate-limited bulk email</h4>
+        <p>Space out 10,000 marketing emails by staggering <code>deliver_at</code> timestamps. No external throttle service needed.</p>
+        <span class="uc-tag">deliver_at: now + i * 100ms</span>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── PERFORMANCE ─── -->
+<section id="performance">
+  <p class="section-label">Performance</p>
+  <h2 class="section-title">Built for production.<br>Honest about limits.</h2>
+  <p class="section-sub">Single-node numbers on commodity hardware. Phase 2 adds Raft clustering.</p>
+
+  <div class="table-wrap">
+    <table class="perf-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Write throughput (fsync=interval)</td><td class="ok">~50,000 msgs/sec</td><td class="muted">Default config</td></tr>
+        <tr><td>Write throughput (fsync=never)</td><td class="ok">~500,000 msgs/sec</td><td class="muted">Lossy mode</td></tr>
+        <tr><td>Read throughput</td><td class="ok">~100,000 msgs/sec</td><td class="muted">—</td></tr>
+        <tr><td>Scheduled heap size</td><td class="ok">10M entries ≈ 1 GB RAM</td><td class="muted">In-memory Min-Heap</td></tr>
+        <tr><td>Delivery accuracy</td><td class="ok">±10 ms</td><td class="muted">OS timer resolution</td></tr>
+        <tr><td>Cluster delivery accuracy</td><td class="warn">±500 ms</td><td class="muted">Phase 2 — NTP recommended</td></tr>
+        <tr><td>Maximum connections</td><td class="ok">~65,000 TCP</td><td class="muted">OS limit</td></tr>
+        <tr><td>In-memory index @ 10 GB RAM</td><td class="ok">~100M messages</td><td class="muted">bbolt index cache</td></tr>
+        <tr><td>Docker image size</td><td class="ok">~20 MB</td><td class="muted">Multi-stage distroless</td></tr>
+        <tr><td>Minimum RAM</td><td class="ok">512 MB</td><td class="muted">Comfortably runs on free tier VMs</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ─── OPEN SOURCE CTA ─── -->
+<section style="text-align:center;padding:80px 5%">
+  <p class="section-label" style="text-align:center">Open source</p>
+  <h2 class="section-title" style="max-width:560px;margin:0 auto 14px">MIT licensed. Community driven.</h2>
+  <p class="section-sub" style="margin:0 auto 36px">EpochQ is fully open source. Contributions, bug reports, and feature discussions are welcome.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a class="btn btn-primary" href="https://github.com/snehjoshi/epochq">
+      <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      Star on GitHub
+    </a>
+    <a class="btn btn-ghost" href="https://github.com/snehjoshi/epochq/blob/main/CONTRIBUTING.md">Contributing Guide</a>
+    <a class="btn btn-ghost" href="https://github.com/snehjoshi/epochq/tree/main/docs">Documentation</a>
+  </div>
+  <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+    <span class="pill pill-go">Go 1.24</span>
+    <span class="pill pill-mit">MIT License</span>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<hr class="divider">
+<footer>
+  <div class="footer-brand">
+    <h3>⏱ EpochQ</h3>
+    <p>The queue that replaces your cron jobs. Self-hostable. Zero dependencies. Production-ready.</p>
+  </div>
+  <div class="footer-links">
+    <h5>Docs</h5>
+    <ul>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/docs/getting-started.md">Getting Started</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/docs/api-reference.md">API Reference</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/docs/architecture.md">Architecture</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/CHANGELOG.md">Changelog</a></li>
+    </ul>
+  </div>
+  <div class="footer-links">
+    <h5>Community</h5>
+    <ul>
+      <li><a href="https://github.com/snehjoshi/epochq">GitHub</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/issues">Issues</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/discussions">Discussions</a></li>
+      <li><a href="CONTRIBUTING.md">Contributing</a></li>
+    </ul>
+  </div>
+  <div class="footer-links">
+    <h5>Legal</h5>
+    <ul>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/LICENSE">MIT License</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a></li>
+      <li><a href="https://github.com/snehjoshi/epochq/blob/main/SECURITY.md">Security Policy</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  © 2026 EpochQ contributors — Released under the MIT License
+</div>
+
+<script>
+  // Tab switcher (if needed in future sections)
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.closest('.tabs').dataset.group;
+      document.querySelectorAll(`.tab[data-group="${group}"]`).forEach(t => t.classList.remove('active'));
+      document.querySelectorAll(`.tab-pane[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector(`.tab-pane[data-pane="${tab.dataset.pane}"]`)?.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

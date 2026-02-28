@@ -1,0 +1,5 @@
+# Phase 2 placeholder
+# ReplicatedStorage will live here.
+# It will implement storage.StorageEngine using hashicorp/raft under the hood.
+# The queue engine and all layers above it will need zero changes —
+# only the storage implementation is swapped.

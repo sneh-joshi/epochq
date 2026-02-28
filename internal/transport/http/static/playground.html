@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EpochQ Playground</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --surface2: #22263a;
+      --border:   #2a2d3e;
+      --accent:   #6c63ff;
+      --accent2:  #00d9a3;
+      --text:     #e2e4ef;
+      --muted:    #6b7280;
+      --danger:   #ff4c6a;
+      --warn:     #f59e0b;
+      --ok:       #10b981;
+      --radius:   8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ───────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+    .logo a { color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+
+    .pill { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 4px; background: rgba(108,99,255,.2); color: var(--accent); }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .btn-sm {
+      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: none; color: var(--text); cursor: pointer; font-size: 12px; font-weight: 500;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-sm:hover { border-color: var(--accent); background: rgba(108,99,255,.08); }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0;
+      transition: background .3s;
+    }
+    .status-dot.connected   { background: var(--ok);    box-shadow: 0 0 6px var(--ok); }
+    .status-dot.connecting  { background: var(--warn);  animation: blink 1s infinite; }
+    .status-dot.disconnected{ background: var(--muted); }
+    .status-dot.error       { background: var(--danger);}
+    @keyframes blink { 50% { opacity: .3; } }
+
+    /* ── Body layout ─────────────────────── */
+    .workspace {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Panels ──────────────────────────── */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+    .panel:last-child { border-right: none; }
+
+    .panel-head {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .03em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px;
+    }
+
+    /* ── Form elements ───────────────────── */
+    .form-row { margin-bottom: 12px; }
+    .form-row.inline { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { display: block; font-size: 11px; font-weight: 600; color: var(--muted);
+      letter-spacing: .06em; text-transform: uppercase; margin-bottom: 5px; }
+
+    input[type="text"], input[type="number"], input[type="datetime-local"],
+    textarea, select {
+      width: 100%;
+      padding: 8px 11px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Buttons ─────────────────────────── */
+    .btn {
+      padding: 9px 18px; border-radius: var(--radius); cursor: pointer;
+      font-size: 13px; font-weight: 600; border: none; transition: opacity .15s;
+    }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { opacity: .88; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-danger:hover:not(:disabled) { opacity: .88; }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .btn-ok { background: var(--ok); color: #fff; }
+    .btn-ok:hover:not(:disabled) { opacity: .88; }
+    .btn-warn { background: rgba(245,158,11,.15); border: 1px solid var(--warn); color: var(--warn); }
+    .btn-warn:hover:not(:disabled) { background: rgba(245,158,11,.25); }
+
+    .full-btn { width: 100%; text-align: center; }
+
+    /* ── Metadata rows ───────────────────── */
+    .meta-rows { display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; }
+    .meta-row  { display: grid; grid-template-columns: 1fr 1fr 28px; gap: 6px; align-items: center; }
+    .meta-row input { margin: 0; }
+    .meta-del  {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--danger);
+      cursor: pointer; font-size: 14px; flex-shrink: 0; line-height: 1;
+    }
+    .meta-del:hover { background: rgba(255,76,106,.1); }
+
+    /* ── Status bar ──────────────────────── */
+    .status-bar {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      min-height: 32px;
+      flex-shrink: 0;
+    }
+    .status-bar.ok     { color: var(--ok); }
+    .status-bar.error  { color: var(--danger); }
+
+    /* ── Right panel tabs ─────────────────── */
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .tab {
+      padding: 10px 18px; font-size: 12px; font-weight: 600; color: var(--muted);
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab:hover:not(.active) { color: var(--text); }
+
+    /* ── Connection bar ───────────────────── */
+    .connect-bar {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+    .connect-bar .form-row { margin-bottom: 0; flex: 1; min-width: 100px; }
+    .connect-bar label { margin-bottom: 4px; }
+
+    /* ── Message feed ─────────────────────── */
+    .feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .msg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+
+    .msg-card.acked  { border-color: var(--ok);    opacity: .55; }
+    .msg-card.nacked { border-color: var(--danger); opacity: .55; }
+
+    .msg-header {
+      padding: 8px 12px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .msg-id   { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); word-break: break-all; flex: 1; }
+    .msg-tag  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 3px;
+      background: rgba(0,217,163,.15); color: var(--accent2); white-space: nowrap; }
+
+    .msg-body {
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 120px;
+      overflow-y: auto;
+      color: var(--text);
+    }
+
+    .msg-meta {
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .msg-actions {
+      padding: 8px 12px;
+      display: flex;
+      gap: 7px;
+      border-top: 1px solid var(--border);
+    }
+    .msg-actions .btn { padding: 5px 12px; font-size: 12px; }
+
+    .empty-feed {
+      text-align: center; color: var(--muted); padding: 48px 20px;
+      font-size: 13px; line-height: 1.7;
+    }
+    .empty-feed svg { margin-bottom: 12px; opacity: .35; }
+
+    /* ── Divider label ───────────────────── */
+    .divider-label {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: 5px 0 3px;
+    }
+
+    /* ── Settings modal ──────────────────── */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 32px; min-width: 340px; max-width: 460px; width: 90%;
+    }
+    .modal-box h3 { font-size: 15px; margin-bottom: 14px; }
+    .modal-box p  { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+    /* ── Scrollbar ───────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <a href="/dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+        <line x1="12" y1="12" x2="12" y2="16"/>
+        <line x1="10" y1="14" x2="14" y2="14"/>
+      </svg>
+      EpochQ
+    </a>
+    <span class="pill">Playground</span>
+  </div>
+  <div class="header-right">
+    <button class="btn-sm" id="settingsBtn">⚙ API Key</button>
+    <span id="connStatus" class="status-dot disconnected" title="WebSocket disconnected"></span>
+  </div>
+</header>
+
+<!-- Settings modal -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-box">
+    <h3>API Key Settings</h3>
+    <p>Stored in <code style="font-family:monospace">localStorage</code> only — never exposed in the URL.</p>
+    <div class="form-row">
+      <label>X-Api-Key</label>
+      <input type="password" id="apiKeyInput" placeholder="Leave empty if auth is disabled" />
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-outline" id="settingsCancel">Cancel</button>
+      <button class="btn btn-primary" id="settingsSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main workspace -->
+<div class="workspace">
+
+  <!-- ─── LEFT: Publish ─────────────────────────── -->
+  <div class="panel">
+    <div class="panel-head">
+      <span>Publish Message</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="form-row inline">
+        <div>
+          <label>Namespace</label>
+          <input type="text" id="pubNs" placeholder="e.g. payments" value="default" />
+        </div>
+        <div>
+          <label>Queue</label>
+          <input type="text" id="pubQueue" placeholder="e.g. invoices" value="demo" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Message Body</label>
+        <textarea id="pubBody" rows="5" placeholder='{"task":"send_email","userId":123}'></textarea>
+      </div>
+
+      <div class="form-row inline">
+        <div>
+          <label>Deliver At (optional)</label>
+          <input type="datetime-local" id="pubDeliverAt" title="Leave blank for immediate delivery" />
+        </div>
+        <div>
+          <label>Max Retries</label>
+          <input type="number" id="pubMaxRetries" placeholder="queue default" min="0" step="1" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="divider-label">Metadata (optional)</div>
+        <div class="meta-rows" id="metaRows"></div>
+        <button class="btn btn-outline" id="addMetaBtn" style="font-size:12px;padding:5px 12px">+ Add metadata field</button>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="btn btn-primary full-btn" id="publishBtn">⬆ Publish</button>
+      </div>
+
+    </div>
+    <div class="status-bar" id="pubStatus">Ready to publish.</div>
+  </div>
+
+  <!-- ─── RIGHT: Consume / Live Feed ───────────────── -->
+  <div class="panel" style="border-right:none">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" data-tab="ws">WebSocket Live Feed</div>
+      <div class="tab" data-tab="poll">HTTP Poll</div>
+    </div>
+
+    <!-- Connection bar (shared between tabs, filtered by active tab) -->
+    <div class="connect-bar" id="wsBar">
+      <div class="form-row" style="min-width:120px">
+        <label>Namespace</label>
+        <input type="text" id="wsNs" placeholder="payments" value="default" />
+      </div>
+      <div class="form-row" style="min-width:120px">
+        <label>Queue</label>
+        <input type="text" id="wsQueue" placeholder="invoices" value="demo" />
+      </div>
+      <button class="btn btn-primary" id="wsConnectBtn" style="white-space:nowrap;padding:8px 16px">Connect</button>
+      <button class="btn btn-outline" id="wsClearBtn" style="padding:8px 12px" title="Clear messages">Clear</button>
+    </div>
+
+    <div class="connect-bar" id="pollBar" style="display:none">
+      <div class="form-row" style="min-width:120px">
+        <label>Namespace</label>
+        <input type="text" id="pollNs" placeholder="payments" value="default" />
+      </div>
+      <div class="form-row" style="min-width:120px">
+        <label>Queue</label>
+        <input type="text" id="pollQueue" placeholder="invoices" value="demo" />
+      </div>
+      <div class="form-row" style="width:70px">
+        <label>Get N</label>
+        <input type="number" id="pollN" value="5" min="1" max="100" />
+      </div>
+      <button class="btn btn-primary" id="pollBtn" style="white-space:nowrap;padding:8px 16px">Poll</button>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;margin:0;text-transform:none;letter-spacing:0">
+        <input type="checkbox" id="autoPollChk" style="width:auto;margin:0" /> Auto (3 s)
+      </label>
+      <button class="btn btn-outline" id="pollClearBtn" style="padding:8px 12px" title="Clear the message feed (does not delete from server)">Clear feed</button>
+      <button class="btn btn-danger" id="purgeBtn" style="white-space:nowrap;padding:8px 14px" title="Delete ALL messages from the queue on the server">🗑 Purge Queue</button>
+    </div>
+
+    <!-- Message feed -->
+    <div class="feed" id="feed">
+      <div class="empty-feed" id="emptyFeed">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+        </svg>
+        <div>No messages yet.</div>
+        <div style="font-size:12px;margin-top:4px">Connect a WebSocket or click Poll to receive messages.</div>
+      </div>
+    </div>
+
+    <div class="status-bar" id="wsStatus">Disconnected.</div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  const $  = id => document.getElementById(id);
+  const qs = sel => document.querySelector(sel);
+
+  function getApiKey() { return localStorage.getItem("epochq_api_key") || ""; }
+
+  function apiHeaders(extra = {}) {
+    const h = { "Content-Type": "application/json", ...extra };
+    const key = getApiKey();
+    if (key) h["X-Api-Key"] = key;
+    return h;
+  }
+
+  async function apiFetch(method, path, body) {
+    const opts = { method, headers: apiHeaders() };
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const res = await fetch(path, opts);
+    if (!res.ok) {
+      let msg = res.statusText;
+      try { const j = await res.json(); msg = j.error || msg; } catch(_) {}
+      throw new Error(`${res.status}: ${msg}`);
+    }
+    if (res.status === 204 || res.headers.get("content-length") === "0") return null;
+    return res.json();
+  }
+
+  function setStatus(el, msg, cls = "") {
+    el.textContent = msg;
+    el.className = "status-bar" + (cls ? " " + cls : "");
+  }
+
+  function atob64(b64) {
+    try { return atob(b64); } catch(_) { return b64; }
+  }
+
+  function esc(s) {
+    return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function fmtDate(ms) {
+    if (!ms) return "—";
+    return new Date(ms).toLocaleString();
+  }
+
+  // ── Settings modal ─────────────────────────────────────────────────────────
+
+  const settingsModal = $("settingsModal");
+  $("settingsBtn").addEventListener("click", () => {
+    $("apiKeyInput").value = getApiKey();
+    settingsModal.style.display = "flex";
+  });
+  $("settingsCancel").addEventListener("click", () => { settingsModal.style.display = "none"; });
+  $("settingsSave").addEventListener("click", () => {
+    const k = $("apiKeyInput").value.trim();
+    if (k) localStorage.setItem("epochq_api_key", k);
+    else localStorage.removeItem("epochq_api_key");
+    settingsModal.style.display = "none";
+  });
+  settingsModal.addEventListener("click", e => {
+    if (e.target === settingsModal) settingsModal.style.display = "none";
+  });
+
+  // ── Tabs ───────────────────────────────────────────────────────────────────
+
+  let activeTab = "ws";
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => {
+      activeTab = t.dataset.tab;
+      document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
+      $("wsBar").style.display   = activeTab === "ws"   ? "flex" : "none";
+      $("pollBar").style.display = activeTab === "poll" ? "flex" : "none";
+    });
+  });
+
+  // ── Metadata rows ──────────────────────────────────────────────────────────
+
+  $("addMetaBtn").addEventListener("click", () => addMetaRow());
+
+  function addMetaRow(k = "", v = "") {
+    const row = document.createElement("div");
+    row.className = "meta-row";
+    row.innerHTML = `
+      <input type="text" placeholder="key" value="${esc(k)}" />
+      <input type="text" placeholder="value" value="${esc(v)}" />
+      <button class="meta-del" title="Remove">×</button>
+    `;
+    row.querySelector(".meta-del").addEventListener("click", () => row.remove());
+    $("metaRows").appendChild(row);
+  }
+
+  function readMetadata() {
+    const rows = $("metaRows").querySelectorAll(".meta-row");
+    const meta = {};
+    rows.forEach(r => {
+      const [ki, vi] = r.querySelectorAll("input");
+      if (ki.value.trim()) meta[ki.value.trim()] = vi.value;
+    });
+    return Object.keys(meta).length ? meta : null;
+  }
+
+  // ── Publish ────────────────────────────────────────────────────────────────
+
+  $("publishBtn").addEventListener("click", async () => {
+    const ns    = $("pubNs").value.trim();
+    const queue = $("pubQueue").value.trim();
+    const body  = $("pubBody").value;
+    const pubBtn = $("publishBtn");
+
+    if (!ns || !queue) {
+      setStatus($("pubStatus"), "Namespace and queue are required.", "error");
+      return;
+    }
+
+    // Build payload — body is base64-encoded (server accepts both raw & base64)
+    const payload = { body: btoa(unescape(encodeURIComponent(body))) };
+
+    const dtVal = $("pubDeliverAt").value;
+    if (dtVal) {
+      payload.deliver_at = new Date(dtVal).getTime();
+    }
+
+    const retriesVal = $("pubMaxRetries").value;
+    if (retriesVal !== "") {
+      payload.max_retries = parseInt(retriesVal, 10);
+    }
+
+    const meta = readMetadata();
+    if (meta) payload.metadata = meta;
+
+    pubBtn.disabled = true;
+    pubBtn.textContent = "Publishing…";
+    try {
+      const res = await apiFetch("POST", `/namespaces/${encodeURIComponent(ns)}/queues/${encodeURIComponent(queue)}/messages`, payload);
+      setStatus($("pubStatus"), `✓ Published — ID: ${res.id}`, "ok");
+    } catch (err) {
+      setStatus($("pubStatus"), `✗ ${err.message}`, "error");
+    } finally {
+      pubBtn.disabled = false;
+      pubBtn.textContent = "⬆ Publish";
+    }
+  });
+
+  // Sync publish ns/queue → ws/poll fields
+  [$("pubNs"), $("pubQueue")].forEach((inp, i) => {
+    const targets = [[$("wsNs"), $("pollNs")], [$("wsQueue"), $("pollQueue")]];
+    inp.addEventListener("input", () => {
+      targets[i].forEach(t => { if (!t._edited) t.value = inp.value; });
+    });
+    inp.dispatchEvent(new Event("input"));
+  });
+  [$("wsNs"), $("wsQueue"), $("pollNs"), $("pollQueue")].forEach(inp => {
+    inp.addEventListener("input", () => { inp._edited = true; });
+  });
+
+  // ── WebSocket ──────────────────────────────────────────────────────────────
+
+  let ws      = null;
+  let wsState = "disconnected"; // disconnected | connecting | connected | error
+
+  function setConnStatus(state) {
+    wsState = state;
+    const dot = $("connStatus");
+    dot.className = "status-dot " + state;
+    dot.title = "WebSocket: " + state;
+  }
+
+  $("wsConnectBtn").addEventListener("click", () => {
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+      ws.close();
+      return;
+    }
+    startWS();
+  });
+
+  $("wsClearBtn").addEventListener("click", clearFeed);
+
+  function startWS() {
+    const ns    = $("wsNs").value.trim();
+    const queue = $("wsQueue").value.trim();
+    if (!ns || !queue) {
+      setStatus($("wsStatus"), "Namespace and queue are required.", "error");
+      return;
+    }
+
+    setConnStatus("connecting");
+    $("wsConnectBtn").textContent = "Disconnect";
+    setStatus($("wsStatus"), `Connecting to ${ns}/${queue}…`);
+
+    const proto = location.protocol === "https:" ? "wss:" : "ws:";
+    const url   = `${proto}//${location.host}/namespaces/${encodeURIComponent(ns)}/queues/${encodeURIComponent(queue)}/ws`;
+
+    ws = new WebSocket(url);
+
+    ws.addEventListener("open", () => {
+      setConnStatus("connected");
+      setStatus($("wsStatus"), `Connected — listening on ${ns}/${queue}`, "ok");
+    });
+
+    ws.addEventListener("message", e => {
+      try {
+        const frame = JSON.parse(e.data);
+        if (frame.type === "message") appendMessage(frame, "ws");
+      } catch(_) {}
+    });
+
+    ws.addEventListener("close", () => {
+      setConnStatus("disconnected");
+      $("wsConnectBtn").textContent = "Connect";
+      setStatus($("wsStatus"), "WebSocket closed.");
+      ws = null;
+    });
+
+    ws.addEventListener("error", () => {
+      setConnStatus("error");
+      setStatus($("wsStatus"), "WebSocket error — check the console.", "error");
+    });
+  }
+
+  function sendWS(frame) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(frame));
+    }
+  }
+
+  // ── HTTP Poll ──────────────────────────────────────────────────────────────
+
+  let autoPollTimer = null;
+
+  $("pollBtn").addEventListener("click", doPoll);
+  $("pollClearBtn").addEventListener("click", clearFeed);
+
+  $("purgeBtn").addEventListener("click", async () => {
+    const ns    = $("pollNs").value.trim();
+    const queue = $("pollQueue").value.trim();
+    if (!ns || !queue) {
+      setStatus($("wsStatus"), "Namespace and queue are required.", "error");
+      return;
+    }
+    if (!confirm(`Purge ALL messages from ${ns}/${queue}?\n\nThis removes every READY and IN_FLIGHT message on the server immediately and cannot be undone.`)) return;
+    try {
+      const data = await apiFetch("DELETE", `/namespaces/${encodeURIComponent(ns)}/queues/${encodeURIComponent(queue)}/messages`);
+      const n = data ? (data.purged ?? 0) : 0;
+      setStatus($("wsStatus"), `🗑 Purged ${n} message(s) from ${ns}/${queue}.`, "ok");
+      clearFeed();
+    } catch (err) {
+      setStatus($("wsStatus"), `Purge error: ${err.message}`, "error");
+    }
+  });
+
+  $("autoPollChk").addEventListener("change", () => {
+    if ($("autoPollChk").checked) {
+      autoPollTimer = setInterval(doPoll, 3000);
+      doPoll();
+    } else {
+      clearInterval(autoPollTimer);
+      autoPollTimer = null;
+    }
+  });
+
+  async function doPoll() {
+    const ns    = $("pollNs").value.trim();
+    const queue = $("pollQueue").value.trim();
+    const n     = parseInt($("pollN").value, 10) || 5;
+
+    if (!ns || !queue) {
+      setStatus($("wsStatus"), "Namespace and queue are required.", "error");
+      return;
+    }
+
+    try {
+      const data = await apiFetch("GET", `/namespaces/${encodeURIComponent(ns)}/queues/${encodeURIComponent(queue)}/messages?n=${n}`);
+      const msgs = data.messages || [];
+      if (msgs.length === 0) {
+        setStatus($("wsStatus"), `Polled ${ns}/${queue} — queue empty.`);
+      } else {
+        msgs.forEach(m => appendMessage(m, "poll"));
+        setStatus($("wsStatus"), `Polled ${ns}/${queue} — got ${msgs.length} message(s).`, "ok");
+      }
+    } catch (err) {
+      setStatus($("wsStatus"), `Poll error: ${err.message}`, "error");
+    }
+  }
+
+  // ── Message feed ───────────────────────────────────────────────────────────
+
+  function clearFeed() {
+    const feed = $("feed");
+    feed.innerHTML = `<div class="empty-feed" id="emptyFeed">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+      </svg>
+      <div>No messages yet.</div>
+      <div style="font-size:12px;margin-top:4px">Connect a WebSocket or click Poll to receive messages.</div>
+    </div>`;
+  }
+
+  function appendMessage(msg, source) {
+    // Remove empty-feed placeholder
+    const empty = $("emptyFeed");
+    if (empty) empty.remove();
+
+    const feed = $("feed");
+    const receipt = msg.receipt_handle || "";
+    const bodyText = atob64(msg.body || "");
+    const meta = msg.metadata ? Object.entries(msg.metadata) : [];
+
+    const card = document.createElement("div");
+    card.className = "msg-card";
+    card.dataset.receipt = receipt;
+
+    const metaHtml = meta.length
+      ? meta.map(([k, v]) => `<span><b>${esc(k)}:</b> ${esc(v)}</span>`).join("")
+      : "";
+
+    // Try to pretty-print JSON
+    let prettyBody = bodyText;
+    try { prettyBody = JSON.stringify(JSON.parse(bodyText), null, 2); } catch(_) {}
+
+    card.innerHTML = `
+      <div class="msg-header">
+        <span class="msg-id">${esc(msg.id || receipt)}</span>
+        <span class="msg-tag">${source === "ws" ? "WebSocket" : "Poll"}</span>
+      </div>
+      <div class="msg-body">${esc(prettyBody)}</div>
+      ${meta.length ? `<div class="msg-meta">${metaHtml}</div>` : ""}
+      <div class="msg-meta">
+        <span><b>Published:</b> ${fmtDate(msg.published_at)}</span>
+        <span><b>Attempt:</b> ${msg.attempt || 1}</span>
+        ${msg.namespace ? `<span><b>Queue:</b> ${esc(msg.namespace)}/${esc(msg.queue)}</span>` : ""}
+      </div>
+      ${receipt ? `<div class="msg-actions" style="flex-wrap:wrap">
+        <button class="btn btn-ok ack-btn" data-receipt="${esc(receipt)}" title="ACK — permanently deletes this message from the queue">✓ ACK (delete)</button>
+        <button class="btn btn-warn nack-btn" data-receipt="${esc(receipt)}" title="NACK — returns message to queue for redelivery">↩ NACK (requeue)</button>
+      </div>` : ""}
+    `;
+
+    // ACK / NACK handlers
+    const ackBtn  = card.querySelector(".ack-btn");
+    const nackBtn = card.querySelector(".nack-btn");
+
+    if (ackBtn) {
+      ackBtn.addEventListener("click", async () => {
+        if (source === "ws" && ws && ws.readyState === WebSocket.OPEN) {
+          sendWS({ type: "ack", receipt_handle: receipt });
+        } else {
+          try {
+            await apiFetch("DELETE", `/messages/${encodeURIComponent(receipt)}`);
+          } catch(err) {
+            setStatus($("wsStatus"), `ACK error: ${err.message}`, "error");
+            return;
+          }
+        }
+        card.classList.add("acked");
+        ackBtn.disabled = true;
+        if (nackBtn) nackBtn.disabled = true;
+        ackBtn.textContent = "✓ ACKed (deleted)";
+        setStatus($("wsStatus"), `ACKed message ${esc(msg.id || receipt)}`, "ok");
+      });
+    }
+
+    if (nackBtn) {
+      nackBtn.addEventListener("click", async () => {
+        if (source === "ws" && ws && ws.readyState === WebSocket.OPEN) {
+          sendWS({ type: "nack", receipt_handle: receipt });
+        } else {
+          try {
+            await apiFetch("POST", `/messages/${encodeURIComponent(receipt)}/nack`);
+          } catch(err) {
+            setStatus($("wsStatus"), `NACK error: ${err.message}`, "error");
+            return;
+          }
+        }
+        card.classList.add("nacked");
+        if (ackBtn) ackBtn.disabled = true;
+        nackBtn.disabled = true;
+        nackBtn.textContent = "↩ NACKed";
+        setStatus($("wsStatus"), `NACKed message — will be requeued`, "ok");
+      });
+    }
+
+    // Prepend newest at top
+    feed.insertBefore(card, feed.firstChild);
+  }
+
+})();
+</script>
+</body>
+</html>

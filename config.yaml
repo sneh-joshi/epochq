@@ -1,0 +1,105 @@
+# EpochQ configuration file
+# All values shown are the defaults — only override what you need.
+# Config structure never shrinks: fields are only added, never removed.
+
+node:
+  # id: "auto" means EpochQ generates a ULID on first start and persists it to
+  # data_dir/node_id. You can also set an explicit ULID string here.
+  id: "auto"
+  host: "0.0.0.0"
+  port: 8080
+  data_dir: "./data"
+
+# Phase 2 (clustering) — leave disabled for now.
+# To enable: set enabled: true and list your peer addresses.
+cluster:
+  enabled: false
+  peers: []
+  # peers:
+  #   - "node2:8081"
+  #   - "node3:8082"
+
+storage:
+  # segment_size_mb: rotate the log file when it reaches this size.
+  segment_size_mb: 256
+
+  # compaction_interval: how often the background compaction job runs.
+  # Compaction rewrites the log file to reclaim space from deleted messages.
+  compaction_interval: "1h"
+
+  # fsync controls when data is flushed to physical disk.
+  #   "always"   — flush after every write  (safest, slowest)
+  #   "interval" — flush every fsync_interval_ms milliseconds (default, balanced)
+  #   "batch"    — flush every fsync_batch_size writes
+  #   "never"    — never flush explicitly (fastest, unsafe — dev/test only)
+  fsync: "interval"
+  fsync_interval_ms: 1000
+  fsync_batch_size: 1000
+
+queue:
+  # default_visibility_timeout_ms: how long a consumer has to ACK before the
+  # message becomes visible again and is redelivered.
+  default_visibility_timeout_ms: 30000
+
+  # max_message_size_kb: reject messages larger than this.
+  max_message_size_kb: 256
+
+  # Batch consume limits.
+  max_batch_size: 100
+  default_batch_size: 1
+
+  # max_messages: hard cap on unACKed messages per queue.
+  # Exceeding this returns 429 Too Many Requests to producers.
+  max_messages: 100000
+
+  # max_retries: delivery attempts before a message moves to the DLQ.
+  # Set to 0 to disable retries (move to DLQ on first failure).
+  max_retries: 3
+
+  # retention_period: automatically delete messages older than this.
+  retention_period: "7d"
+
+  # max_schedule_ahead: the furthest in the future a deliverAt may be set.
+  # Messages scheduled beyond this cap are rejected with a 400 error.
+  max_schedule_ahead: "90d"
+
+namespaces:
+  # Namespaces are logical groupings of queues (e.g. "payments", "notifications").
+  # They are created automatically on first use. Use the REST API or the
+  # dashboard to manage them explicitly.
+  #
+  # auto_create: when true, namespaces are registered automatically whenever a
+  # queue is first published to. Set to false to require explicit creation via
+  # the REST API.
+  auto_create: true
+
+producers:
+  # max_rate: maximum messages per second allowed per producer API key.
+  max_rate: 10000
+  # burst: temporary spike allowance above max_rate.
+  burst: 50000
+
+auth:
+  # enabled: set to true and provide api_key to require authentication.
+  enabled: false
+  api_key: ""
+  # api_key: "your-secret-key"
+  # You can also set this via env var: EPOCHQ_AUTH_API_KEY=your-secret-key
+
+metrics:
+  # Prometheus metrics endpoint on a separate port.
+  enabled: true
+  port: 9090
+
+dashboard:
+  # The built-in dashboard is served at GET /dashboard on the main port.
+  # No separate configuration is required — it uses the same API key as
+  # the rest of the server if auth.enabled = true.
+  # Visit http://localhost:8080/dashboard in your browser.
+
+webhook:
+  # retry_delays_ms: how long to wait between successive webhook retry attempts.
+  # 3 retries with these delays = ~36 seconds total before moving to DLQ.
+  retry_delays_ms: [1000, 5000, 30000]
+  # timeout_ms: HTTP timeout for each webhook call.
+  timeout_ms: 5000

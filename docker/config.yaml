@@ -1,0 +1,47 @@
+# EpochQ configuration for Docker deployment.
+# Mount this file to /etc/epochq/config.yaml inside the container.
+
+node:
+  id: "auto"
+  host: "0.0.0.0"
+  port: 8080
+  data_dir: "/data"
+
+cluster:
+  enabled: false
+  peers: []
+
+storage:
+  segment_size_mb: 256
+  compaction_interval: "1h"
+  fsync: "interval"
+  fsync_interval_ms: 1000
+
+queue:
+  default_visibility_timeout_ms: 30000
+  max_message_size_kb: 256
+  max_batch_size: 100
+  default_batch_size: 1
+  max_messages: 100000
+  max_retries: 3
+  retention_period: "7d"
+  max_schedule_ahead: "90d"
+
+namespaces:
+  auto_create: true
+
+producers:
+  max_rate: 10000
+  burst: 50000
+
+auth:
+  enabled: false
+  api_key: ""
+
+metrics:
+  enabled: true
+  port: 9090
+
+webhook:
+  retry_delays_ms: [1000, 5000, 30000]
+  timeout_ms: 5000

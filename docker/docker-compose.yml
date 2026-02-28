@@ -1,0 +1,67 @@
+version: "3.9"
+
+# ── EpochQ single-node deployment ──────────────────────────────────────────────
+#
+# Usage:
+#   docker compose up -d
+#
+# After startup:
+#   Dashboard:  http://localhost:8080/dashboard
+#   Health:     http://localhost:8080/health
+#   Metrics:    http://localhost:9090/metrics
+#
+# To run with auth enabled, set the EPOCHQ_AUTH_API_KEY env var:
+#   EPOCHQ_AUTH_API_KEY=mysecret docker compose up -d
+
+services:
+
+  epochq:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: epochq:latest
+    container_name: epochq
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"    # HTTP API + dashboard
+      - "9090:9090"    # Prometheus metrics
+
+    volumes:
+      - epochq-data:/data
+      - ./config.yaml:/etc/epochq/config.yaml:ro
+
+    environment:
+      # Uncomment and set to enable API-key auth:
+      # EPOCHQ_AUTH_API_KEY: "your-secret-key"
+      TZ: UTC
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ── Optional: Prometheus scraper ────────────────────────────────────────────
+  # Uncomment to get a local Prometheus instance that scrapes EpochQ metrics.
+  #
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: epochq-prometheus
+  #   ports:
+  #     - "9091:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   depends_on:
+  #     - epochq
+
+volumes:
+  epochq-data:
+    driver: local
