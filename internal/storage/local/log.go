@@ -14,8 +14,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/snehjoshi/epochq/internal/types"
 	"github.com/snehjoshi/epochq/internal/storage"
+	"github.com/snehjoshi/epochq/internal/types"
 )
 
 // logVersion identifies the binary format written to log.dat.
@@ -394,13 +394,13 @@ func padULID(s string) [26]byte {
 
 type byteWriter struct{ buf []byte }
 
-func (w *byteWriter) writeByte(v byte)       { w.buf = append(w.buf, v) }
-func (w *byteWriter) write(v []byte)          { w.buf = append(w.buf, v...) }
-func (w *byteWriter) writeUint16(v uint16)    { w.buf = binary.BigEndian.AppendUint16(w.buf, v) }
-func (w *byteWriter) writeUint32(v uint32)    { w.buf = binary.BigEndian.AppendUint32(w.buf, v) }
-func (w *byteWriter) writeUint64(v uint64)    { w.buf = binary.BigEndian.AppendUint64(w.buf, v) }
-func (w *byteWriter) writeInt32(v int32)      { w.buf = binary.BigEndian.AppendUint32(w.buf, uint32(v)) }
-func (w *byteWriter) writeInt64(v int64)      { w.buf = binary.BigEndian.AppendUint64(w.buf, uint64(v)) }
+func (w *byteWriter) writeByte(v byte)     { w.buf = append(w.buf, v) }
+func (w *byteWriter) write(v []byte)       { w.buf = append(w.buf, v...) }
+func (w *byteWriter) writeUint16(v uint16) { w.buf = binary.BigEndian.AppendUint16(w.buf, v) }
+func (w *byteWriter) writeUint32(v uint32) { w.buf = binary.BigEndian.AppendUint32(w.buf, v) }
+func (w *byteWriter) writeUint64(v uint64) { w.buf = binary.BigEndian.AppendUint64(w.buf, v) }
+func (w *byteWriter) writeInt32(v int32)   { w.buf = binary.BigEndian.AppendUint32(w.buf, uint32(v)) }
+func (w *byteWriter) writeInt64(v int64)   { w.buf = binary.BigEndian.AppendUint64(w.buf, uint64(v)) }
 
 type byteReader struct {
 	buf    []byte
@@ -438,5 +438,3 @@ func (r *byteReader) readInt32() int32 {
 func (r *byteReader) readInt64() int64 {
 	return int64(r.readUint64())
 }
-
-

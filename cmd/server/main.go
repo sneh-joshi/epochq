@@ -144,4 +144,3 @@ func run() error {
 	slog.Info("epochq stopped")
 	return nil
 }
-

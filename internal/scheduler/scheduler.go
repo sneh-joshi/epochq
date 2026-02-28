@@ -21,9 +21,9 @@ import (
 //
 // All methods are safe for concurrent use.
 type Scheduler struct {
-	mu     sync.Mutex
-	h      minHeap
-	byID   map[string]*item // msgID → item for O(1) Cancel lookup
+	mu   sync.Mutex
+	h    minHeap
+	byID map[string]*item // msgID → item for O(1) Cancel lookup
 
 	// notify is a buffered channel of capacity 1.
 	// Schedule() sends a signal whenever a new item is added that might be

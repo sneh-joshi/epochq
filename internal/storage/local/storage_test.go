@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/snehjoshi/epochq/internal/node"
-	"github.com/snehjoshi/epochq/internal/types"
 	"github.com/snehjoshi/epochq/internal/storage"
 	"github.com/snehjoshi/epochq/internal/storage/local"
+	"github.com/snehjoshi/epochq/internal/types"
 )
 
 // ---- helpers ----------------------------------------------------------------
@@ -557,4 +557,3 @@ func TestStorage_CrashRecovery_MultipleUncommittedMessages(t *testing.T) {
 		}
 	}
 }
-

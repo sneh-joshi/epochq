@@ -60,8 +60,8 @@ type ReadyEntry struct {
 type InFlightEntry struct {
 	MsgID         string
 	Offset        int64
-	Attempt       int   // current attempt number (persisted in IndexEntry.Attempt)
-	MaxRetries    int   // copied from the message so we can dead-letter without re-reading log
+	Attempt       int // current attempt number (persisted in IndexEntry.Attempt)
+	MaxRetries    int // copied from the message so we can dead-letter without re-reading log
 	ReceiptHandle string
 	DeadlineMs    int64 // UTC ms after which the message becomes visible again
 }
@@ -92,7 +92,7 @@ type Queue struct {
 	eng       storage.StorageEngine
 
 	mu       sync.Mutex
-	ready    *list.List               // elements are *ReadyEntry (FIFO)
+	ready    *list.List                // elements are *ReadyEntry (FIFO)
 	inFlight map[string]*InFlightEntry // receiptHandle → entry
 	msgCount int64                     // READY + IN_FLIGHT count
 
@@ -559,7 +559,7 @@ func (q *Queue) loadFromStorage() error {
 				}
 			}
 
-		// StatusDeleted, StatusDeadLetter → nothing to restore.
+			// StatusDeleted, StatusDeadLetter → nothing to restore.
 		}
 		return nil
 	})

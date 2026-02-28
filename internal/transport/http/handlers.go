@@ -315,6 +315,7 @@ func (h *Handler) consumeMessages(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, consumeResp{Messages: mapDequeueResults(results)})
 }
+
 // ─── Purge Queue ────────────────────────────────────────────────────────────────
 
 func (h *Handler) purgeQueue(w http.ResponseWriter, r *http.Request) {
@@ -331,6 +332,7 @@ func (h *Handler) purgeQueue(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, map[string]int{"purged": n})
 }
+
 // ─── Ack / Nack ───────────────────────────────────────────────────────────────
 
 func (h *Handler) ackMessage(w http.ResponseWriter, r *http.Request) {

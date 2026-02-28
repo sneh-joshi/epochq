@@ -15,9 +15,9 @@ type Status = types.Status
 
 // Re-export status constants.
 const (
-StatusReady      = types.StatusReady
-StatusInFlight   = types.StatusInFlight
-StatusDeleted    = types.StatusDeleted
-StatusDeadLetter = types.StatusDeadLetter
-StatusScheduled  = types.StatusScheduled
+	StatusReady      = types.StatusReady
+	StatusInFlight   = types.StatusInFlight
+	StatusDeleted    = types.StatusDeleted
+	StatusDeadLetter = types.StatusDeadLetter
+	StatusScheduled  = types.StatusScheduled
 )

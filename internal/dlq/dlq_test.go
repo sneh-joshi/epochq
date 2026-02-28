@@ -51,11 +51,11 @@ func TestDLQ_Len_AfterDeadLetter(t *testing.T) {
 	}
 
 	msg := &queue.Message{
-		ID:          node.MustNewID(),
-		Namespace:   "ns",
-		Queue:       "orders",
-		Body:        []byte(`dead`),
-		MaxRetries:  1,
+		ID:         node.MustNewID(),
+		Namespace:  "ns",
+		Queue:      "orders",
+		Body:       []byte(`dead`),
+		MaxRetries: 1,
 	}
 	exhaustRetries(t, q, msg)
 
@@ -76,11 +76,11 @@ func TestDLQ_Drain(t *testing.T) {
 	}
 
 	msg := &queue.Message{
-		ID:          node.MustNewID(),
-		Namespace:   "ns",
-		Queue:       "orders",
-		Body:        []byte(`dead`),
-		MaxRetries:  1,
+		ID:         node.MustNewID(),
+		Namespace:  "ns",
+		Queue:      "orders",
+		Body:       []byte(`dead`),
+		MaxRetries: 1,
 	}
 	exhaustRetries(t, q, msg)
 
@@ -108,11 +108,11 @@ func TestDLQ_Replay(t *testing.T) {
 	}
 
 	msg := &queue.Message{
-		ID:          node.MustNewID(),
-		Namespace:   "ns",
-		Queue:       "orders",
-		Body:        []byte(`replay-me`),
-		MaxRetries:  1,
+		ID:         node.MustNewID(),
+		Namespace:  "ns",
+		Queue:      "orders",
+		Body:       []byte(`replay-me`),
+		MaxRetries: 1,
 	}
 	exhaustRetries(t, q, msg)
 

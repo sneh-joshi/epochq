@@ -287,9 +287,9 @@ func TestQueue_ScheduledMessage_DeliveredAfterDelay(t *testing.T) {
 
 func TestQueue_StateTransitions(t *testing.T) {
 	cases := []struct {
-		from    queue.Status
-		to      queue.Status
-		want    bool
+		from queue.Status
+		to   queue.Status
+		want bool
 	}{
 		{queue.StatusReady, queue.StatusInFlight, true},
 		{queue.StatusReady, queue.StatusDeleted, false},
@@ -405,4 +405,3 @@ func TestQueue_RebuildFromStorage_InFlightExpired(t *testing.T) {
 		}
 	}
 }
-

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/snehjoshi/epochq/internal/types"
 	"github.com/snehjoshi/epochq/internal/storage"
+	"github.com/snehjoshi/epochq/internal/types"
 )
 
 // Compactor rewrites the log file, removing entries for deleted messages.

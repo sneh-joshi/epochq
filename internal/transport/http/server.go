@@ -113,7 +113,9 @@ func New(b *broker.Broker, cm *consumer.Manager, cfg *config.Config, ns *namespa
 	// Build middleware chain: logging → auth → rate-limit
 	rps := 100.0
 	burst := 200
-	if r := cfg.Node; r.DataDir != "" { /* placeholder for future config */ _ = r }
+	if r := cfg.Node; r.DataDir != "" { /* placeholder for future config */
+		_ = r
+	}
 
 	authEnabled := cfg.Auth.Enabled
 	apiKey := cfg.Auth.APIKey

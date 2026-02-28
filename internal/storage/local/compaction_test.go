@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/snehjoshi/epochq/internal/node"
-	"github.com/snehjoshi/epochq/internal/types"
 	"github.com/snehjoshi/epochq/internal/storage"
 	"github.com/snehjoshi/epochq/internal/storage/local"
+	"github.com/snehjoshi/epochq/internal/types"
 )
 
 // openStorageWithCompaction opens a Storage with a long compaction interval so

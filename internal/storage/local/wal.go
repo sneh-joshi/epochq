@@ -156,7 +156,7 @@ func (w *WAL) Replay() ([]WALEntry, error) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
-	writes := make(map[uint64]WALEntry)  // seq → entry
+	writes := make(map[uint64]WALEntry)    // seq → entry
 	committed := make(map[uint64]struct{}) // seq → committed
 
 	if err := w.scanEntries(func(op uint8, seq uint64, msgID string, payload []byte) {
