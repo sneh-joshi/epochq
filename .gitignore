@@ -57,3 +57,6 @@ env/
 # Temporary files
 *.tmp
 *.bak
+
+# Internal planning prompts
+plan-*.prompt.md
