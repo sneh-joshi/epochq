@@ -1,5 +1,5 @@
-# EpochQ configuration for Docker deployment.
-# Mount this file to /etc/epochq/config.yaml inside the container.
+# EpochQueue configuration for Docker deployment.
+# Mount this file to /etc/epochqueue/config.yaml inside the container.
 
 node:
   id: "auto"

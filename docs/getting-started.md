@@ -1,6 +1,6 @@
-# Getting Started with EpochQ
+# Getting Started with EpochQueue
 
-This guide gets you from zero to running a EpochQ server and publishing your first scheduled message in under 5 minutes.
+This guide gets you from zero to running a EpochQueue server and publishing your first scheduled message in under 5 minutes.
 
 ---
 
@@ -16,18 +16,18 @@ This guide gets you from zero to running a EpochQ server and publishing your fir
 ### Option A — Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/sneh-joshi/epochq
-cd epochq/docker
+git clone https://github.com/sneh-joshi/epochqueue
+cd epochqueue/docker
 docker compose up -d
 ```
 
 ### Option B — Build from source
 
 ```bash
-git clone https://github.com/sneh-joshi/epochq
-cd epochq
-go build -o epochq ./cmd/server
-./epochq --config config.yaml
+git clone https://github.com/sneh-joshi/epochqueue
+cd epochqueue
+go build -o epochqueue ./cmd/server
+./epochqueue --config config.yaml
 ```
 
 ### Option C — Run tests first
@@ -39,9 +39,9 @@ go test ./... -count=1 -timeout 90s
 All packages should pass. Then:
 
 ```bash
-./epochq                        # uses ./config.yaml by default
+./epochqueue                        # uses ./config.yaml by default
 # or
-./epochq --config /etc/epochq/config.yaml
+./epochqueue --config /etc/epochqueue/config.yaml
 ```
 
 ### Verify the server is up
@@ -61,7 +61,7 @@ Open the dashboard at http://localhost:8080/dashboard.
 
 ## 2. Publish your first message
 
-EpochQ uses namespaces to group queues. Namespaces are auto-created on first use.
+EpochQueue uses namespaces to group queues. Namespaces are auto-created on first use.
 
 ```bash
 BASE=http://localhost:8080
@@ -141,7 +141,7 @@ The message will not appear in consume calls until the `deliver_at` time is reac
 ## 6. Use the Go SDK
 
 ```bash
-go get github.com/sneh-joshi/epochq/pkg/client
+go get github.com/sneh-joshi/epochqueue/pkg/client
 ```
 
 ```go
@@ -154,7 +154,7 @@ import (
     "log"
     "time"
 
-    "github.com/sneh-joshi/epochq/pkg/client"
+    "github.com/sneh-joshi/epochqueue/pkg/client"
 )
 
 func main() {
@@ -199,7 +199,7 @@ func mustJSON(v any) []byte {
 
 ## 7. Subscribe a webhook
 
-EpochQ will POST messages to your URL as they become READY.
+EpochQueue will POST messages to your URL as they become READY.
 
 ```bash
 curl -s -X POST "$BASE/namespaces/payments/queues/invoices/subscriptions" \
@@ -216,7 +216,7 @@ Your endpoint will receive:
 ```
 POST https://myapp.example.com/webhooks/invoices
 Content-Type: application/json
-X-EpochQ-Signature: sha256=<hmac>
+X-EpochQueue-Signature: sha256=<hmac>
 
 {"id":"…","body":"…","namespace":"payments","queue":"invoices",…}
 ```
@@ -270,7 +270,7 @@ c := client.New("http://localhost:8080", client.WithAPIKey("my-secret-key"))
 
 ## 10. Prometheus metrics
 
-EpochQ exposes Prometheus metrics on port 9090 (configurable):
+EpochQueue exposes Prometheus metrics on port 9090 (configurable):
 
 ```bash
 curl http://localhost:9090/metrics
@@ -286,7 +286,7 @@ Add a scrape config to `prometheus.yml`:
 
 ```yaml
 scrape_configs:
-  - job_name: epochq
+  - job_name: epochqueue
     static_configs:
       - targets: ['localhost:9090']
 ```
@@ -296,5 +296,5 @@ scrape_configs:
 ## Next steps
 
 - [API Reference](api-reference.md) — complete endpoint documentation
-- [Architecture](architecture.md) — how EpochQ works internally
+- [Architecture](architecture.md) — how EpochQueue works internally
 - [config.yaml](../config.yaml) — all configuration options with comments

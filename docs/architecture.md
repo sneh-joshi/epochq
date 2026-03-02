@@ -1,6 +1,6 @@
-# EpochQ Architecture
+# EpochQueue Architecture
 
-This document describes the internal design of EpochQ Phase 1 (single-node). It explains **what each package does**, **how they are wired together**, and **why specific design decisions were made**.
+This document describes the internal design of EpochQueue Phase 1 (single-node). It explains **what each package does**, **how they are wired together**, and **why specific design decisions were made**.
 
 ---
 
@@ -77,7 +77,7 @@ local.StorageEngine.Append(msg)
 200 OK {"id":"01JP…"}
 ```
 
-The WAL entry is written **before** the in-memory queue state changes. On restart, EpochQ replays the WAL to reconstruct in-memory state for all queues.
+The WAL entry is written **before** the in-memory queue state changes. On restart, EpochQueue replays the WAL to reconstruct in-memory state for all queues.
 
 ---
 
@@ -91,7 +91,7 @@ every 1 second:
     SELECT * FROM messages WHERE deliver_at <= NOW()   ← O(N), gets slower as queue grows
 ```
 
-### EpochQ approach: Min-Heap
+### EpochQueue approach: Min-Heap
 ```
 Min-Heap (ordered by deliverAt, root = earliest)
     peek root → O(1)

@@ -15,8 +15,8 @@ If you discover a security vulnerability, report it privately so it can be patch
 
 **How to report:**
 
-1. Open a [GitHub Security Advisory](https://github.com/sneh-joshi/epochq/security/advisories/new) (preferred).
-2. Or send an email with details — include "EpochQ Security" in the subject line.
+1. Open a [GitHub Security Advisory](https://github.com/sneh-joshi/epochqueue/security/advisories/new) (preferred).
+2. Or send an email with details — include "EpochQueue Security" in the subject line.
 
 **What to include:**
 
@@ -33,7 +33,7 @@ If you discover a security vulnerability, report it privately so it can be patch
 
 ## Security Model
 
-EpochQ is designed for **trusted networks** (internal services, private VPCs). The threat model for Phase 1 (single-node) is:
+EpochQueue is designed for **trusted networks** (internal services, private VPCs). The threat model for Phase 1 (single-node) is:
 
 | Threat | Mitigation |
 |--------|-----------|
@@ -45,7 +45,7 @@ EpochQ is designed for **trusted networks** (internal services, private VPCs). T
 
 ## Known Limitations
 
-- **No TLS built-in** — terminate TLS at a reverse proxy (nginx, Caddy, Traefik) in front of EpochQ.
+- **No TLS built-in** — terminate TLS at a reverse proxy (nginx, Caddy, Traefik) in front of EpochQueue.
 - **Single static API key** — all authenticated callers share the same key. Per-namespace keys are planned for Phase 2.
 - **No IP allowlisting built-in** — use your network/firewall for IP-level access control.
 - **No audit log** — request logging is informational only; structured logs are written to stdout.

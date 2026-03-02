@@ -1,6 +1,6 @@
 version: "3.9"
 
-# ── EpochQ single-node deployment ──────────────────────────────────────────────
+# ── EpochQueue single-node deployment ──────────────────────────────────────────
 #
 # Usage:
 #   docker compose up -d
@@ -10,17 +10,17 @@ version: "3.9"
 #   Health:     http://localhost:8080/health
 #   Metrics:    http://localhost:9090/metrics
 #
-# To run with auth enabled, set the EPOCHQ_AUTH_API_KEY env var:
-#   EPOCHQ_AUTH_API_KEY=mysecret docker compose up -d
+# To run with auth enabled, set the EPOCHQUEUE_AUTH_API_KEY env var:
+#   EPOCHQUEUE_AUTH_API_KEY=mysecret docker compose up -d
 
 services:
 
-  epochq:
+  epochqueue:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: epochq:latest
-    container_name: epochq
+    image: epochqueue:latest
+    container_name: epochqueue
     restart: unless-stopped
 
     ports:
@@ -28,12 +28,12 @@ services:
       - "9090:9090"    # Prometheus metrics
 
     volumes:
-      - epochq-data:/data
-      - ./config.yaml:/etc/epochq/config.yaml:ro
+      - epochqueue-data:/data
+      - ./config.yaml:/etc/epochqueue/config.yaml:ro
 
     environment:
       # Uncomment and set to enable API-key auth:
-      # EPOCHQ_AUTH_API_KEY: "your-secret-key"
+      # EPOCHQUEUE_AUTH_API_KEY: "your-secret-key"
       TZ: UTC
 
     healthcheck:
@@ -50,18 +50,18 @@ services:
         max-file: "5"
 
   # ── Optional: Prometheus scraper ────────────────────────────────────────────
-  # Uncomment to get a local Prometheus instance that scrapes EpochQ metrics.
+  # Uncomment to get a local Prometheus instance that scrapes EpochQueue metrics.
   #
   # prometheus:
   #   image: prom/prometheus:latest
-  #   container_name: epochq-prometheus
+  #   container_name: epochqueue-prometheus
   #   ports:
   #     - "9091:9090"
   #   volumes:
   #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
   #   depends_on:
-  #     - epochq
+  #     - epochqueue
 
 volumes:
-  epochq-data:
+  epochqueue-data:
     driver: local

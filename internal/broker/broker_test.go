@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sneh-joshi/epochq/internal/broker"
-	"github.com/sneh-joshi/epochq/internal/config"
-	"github.com/sneh-joshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochqueue/internal/broker"
+	"github.com/sneh-joshi/epochqueue/internal/config"
+	"github.com/sneh-joshi/epochqueue/internal/queue"
 )
 
 // ─── helpers ─────────────────────────────────────────────────────────────────

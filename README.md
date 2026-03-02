@@ -1,18 +1,18 @@
-# EpochQ
+# EpochQueue
 
-> **The queue that replaces your cron jobs.**
+> **Scheduled & durable message queue for immediate and delayed jobs.**
 
-EpochQ is a lightweight, self-hostable message queue server built for developers who need **durable, time-based message delivery** without the operational complexity of Kafka, RabbitMQ, or cloud-vendor lock-in.
+EpochQueue is a lightweight, self-hostable message queue server for developers who need **regular queueing + time-based delivery** without the operational complexity of heavyweight messaging systems or cloud lock-in.
 
 [![Go](https://img.shields.io/badge/Go-1.24-blue)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Website](https://img.shields.io/badge/website-epochq.dev-7c5cfc)](https://sneh-joshi.github.io/epochq)
+[![Website](https://img.shields.io/badge/website-epochqueue.dev-7c5cfc)](https://sneh-joshi.github.io/epochqueue)
 
 ---
 
-## Why EpochQ?
+## Why EpochQueue?
 
-| Problem | Old Way | With EpochQ |
+| Problem | Old Way | With EpochQueue |
 |---|---|---|
 | Send email 1 hr after signup | Cron job + DB polling | `Publish(body, WithDelay(time.Hour))` |
 | Retry failed payment after 24 hr | Scheduler service | `Publish(body, WithDelay(24*time.Hour))` |
@@ -44,8 +44,8 @@ EpochQ is a lightweight, self-hostable message queue server built for developers
 ### Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/sneh-joshi/epochq
-cd epochq/docker
+git clone https://github.com/sneh-joshi/epochqueue
+cd epochqueue/docker
 docker compose up -d
 ```
 
@@ -54,8 +54,8 @@ Open your browser at http://localhost:8080/dashboard.
 ### Binary
 
 ```bash
-go build -o epochq ./cmd/server
-./epochq --config config.yaml
+go build -o epochqueue ./cmd/server
+./epochqueue --config config.yaml
 ```
 
 ### Docker (single container)
@@ -63,7 +63,7 @@ go build -o epochq ./cmd/server
 ```bash
 docker run -p 8080:8080 -p 9090:9090 \
   -v $(pwd)/data:/data \
-  epochq/epochq:latest
+  epochqueue/epochqueue:latest
 ```
 
 ---
@@ -98,7 +98,7 @@ curl -s -X POST "$BASE/messages/<receipt_handle>/nack"
 ## Go SDK
 
 ```go
-import "github.com/sneh-joshi/epochq/pkg/client"
+import "github.com/sneh-joshi/epochqueue/pkg/client"
 
 c := client.New("http://localhost:8080",
     client.WithAPIKey("your-secret"),  // omit when auth is disabled
@@ -213,14 +213,14 @@ See [config.yaml](config.yaml) for the full reference with all defaults.
 ### Prometheus metrics
 
 ```
-epochq_messages_published_total{namespace,queue}
-epochq_messages_consumed_total{namespace,queue}
-epochq_messages_acked_total{namespace,queue}
-epochq_messages_nacked_total{namespace,queue}
-epochq_messages_dlq_routed_total{namespace,queue}
-epochq_http_requests_total{method,path,status}
-epochq_http_request_duration_milliseconds_sum{method,path}
-epochq_http_request_duration_milliseconds_count{method,path}
+epochqueue_messages_published_total{namespace,queue}
+epochqueue_messages_consumed_total{namespace,queue}
+epochqueue_messages_acked_total{namespace,queue}
+epochqueue_messages_nacked_total{namespace,queue}
+epochqueue_messages_dlq_routed_total{namespace,queue}
+epochqueue_http_requests_total{method,path,status}
+epochqueue_http_request_duration_milliseconds_sum{method,path}
+epochqueue_http_request_duration_milliseconds_count{method,path}
 ```
 
 ---
@@ -259,7 +259,7 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 ## Project structure
 
 ```
-epochq/
+epochqueue/
 ├── cmd/server/          — server entry point
 ├── pkg/client/          — public Go SDK
 ├── internal/

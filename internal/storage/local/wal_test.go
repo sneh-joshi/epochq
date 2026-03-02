@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sneh-joshi/epochq/internal/node"
-	"github.com/sneh-joshi/epochq/internal/storage/local"
-	"github.com/sneh-joshi/epochq/internal/types"
+	"github.com/sneh-joshi/epochqueue/internal/node"
+	"github.com/sneh-joshi/epochqueue/internal/storage/local"
+	"github.com/sneh-joshi/epochqueue/internal/types"
 )
 
 // ─── helpers ─────────────────────────────────────────────────────────────────

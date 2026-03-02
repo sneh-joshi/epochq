@@ -1,4 +1,4 @@
-module github.com/sneh-joshi/epochq
+module github.com/sneh-joshi/epochqueue
 
 go 1.24.0
 

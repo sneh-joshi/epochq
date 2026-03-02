@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sneh-joshi/epochq/internal/storage"
-	"github.com/sneh-joshi/epochq/internal/types"
+	"github.com/sneh-joshi/epochqueue/internal/storage"
+	"github.com/sneh-joshi/epochqueue/internal/types"
 )
 
 const (

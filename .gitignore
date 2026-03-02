@@ -1,6 +1,6 @@
 # Binaries
-epochq
-epochq-*
+epochqueue
+epochqueue-*
 *.exe
 *.dll
 *.so

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sneh-joshi/epochq/internal/node"
+	"github.com/sneh-joshi/epochqueue/internal/node"
 )
 
 func TestNew_GeneratesIDOnFirstStart(t *testing.T) {

@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EpochQ — The queue that replaces your cron jobs</title>
-  <meta name="description" content="Lightweight, self-hostable message queue with native scheduled delivery. Schedule messages at any future timestamp. Single binary. Zero dependencies." />
-  <meta property="og:title" content="EpochQ — The queue that replaces your cron jobs" />
-  <meta property="og:description" content="Schedule messages at any future UTC millisecond. Built in Go. Self-hostable. Zero dependencies." />
+  <title>EpochQueue — Scheduled & Durable Message Queue (Immediate + Delayed Jobs)</title>
+  <meta name="description" content="EpochQueue is a self-hostable, durable message queue for immediate and delayed jobs. Native scheduled delivery, retries, DLQ, HTTP/WebSocket/Webhook consumers." />
+  <meta name="keywords" content="scheduled message queue, delayed job queue, cron replacement, durable message queue, self-hosted queue, golang queue, retry queue, dead letter queue" />
+  <meta property="og:title" content="EpochQueue — Scheduled & Durable Message Queue" />
+  <meta property="og:description" content="One queue for immediate and delayed jobs. Durable storage, native scheduling, retries, and DLQ." />
   <meta property="og:type" content="website" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱</text></svg>" />
   <style>
@@ -599,16 +600,16 @@
 
 <!-- ─── NAV ─── -->
 <nav>
-  <a class="nav-logo" href="#">⏱ <span>EpochQ</span></a>
+  <a class="nav-logo" href="#">⏱ <span>EpochQueue</span></a>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#quickstart">Quick start</a></li>
     <li><a href="#use-cases">Use cases</a></li>
-    <li><a href="https://github.com/sneh-joshi/epochq/blob/main/docs/api-reference.md">API Docs</a></li>
+    <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/docs/api-reference.md">API Docs</a></li>
   </ul>
   <div style="display:flex;gap:10px">
-    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochq">
+    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochqueue">
       <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
     </a>
@@ -618,12 +619,12 @@
 
 <!-- ─── HERO ─── -->
 <div class="hero">
-  <div class="badge">⏱ Time-native message queue</div>
-  <h1>The queue that <span class="gradient">replaces your cron jobs</span></h1>
-  <p>Schedule messages at any future UTC millisecond. Built in Go. Single binary. Self-hostable. Zero dependencies.</p>
+  <div class="badge">⏱ Scheduled + immediate message queue</div>
+  <h1>A durable message queue for <span class="gradient">now and later</span></h1>
+  <p>Process immediate workloads and delayed jobs in one system. Built in Go, self-hostable, with native scheduled delivery, retries, and DLQ.</p>
   <div class="hero-ctas">
     <a class="btn btn-primary" href="#quickstart">Get started in 60s →</a>
-    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochq">View on GitHub</a>
+    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochqueue">View on GitHub</a>
   </div>
 
   <div style="margin: 48px auto 0; max-width: 680px;">
@@ -667,11 +668,11 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
 </div>
 <hr class="divider">
 
-<!-- ─── WHY EPOCHQ ─── -->
+<!-- ─── WHY EPOCHQUEUE ─── -->
 <section id="why">
-  <p class="section-label">Why EpochQ</p>
-  <h2 class="section-title">Traditional scheduling needed workarounds.<br>EpochQ makes scheduling first-class.</h2>
-  <p class="section-sub">Until now, delayed and time-based workflows usually required multiple moving parts. EpochQ brings them into one simple queueing model.</p>
+  <p class="section-label">Why EpochQueue</p>
+  <h2 class="section-title">Traditional scheduling needed workarounds.<br>EpochQueue makes scheduling first-class.</h2>
+  <p class="section-sub">Until now, delayed and time-based workflows usually required multiple moving parts. EpochQueue brings them into one simple queueing model.</p>
 
   <div class="compare-grid">
     <div class="compare-card bad">
@@ -686,7 +687,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
       </ul>
     </div>
     <div class="compare-card good">
-      <h4>✅ The EpochQ way</h4>
+      <h4>✅ The EpochQueue way</h4>
       <ul>
         <li>Native <code>deliver_at</code> — any future UTC millisecond</li>
         <li>Configurable scheduling window (default 90 days)</li>
@@ -699,7 +700,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
   </div>
 
   <div class="benefits-strip">
-    <h4>Why EpochQ instead of a separate scheduler service?</h4>
+    <h4>Why EpochQueue instead of a separate scheduler service?</h4>
     <ul>
       <li>One API for immediate and delayed work</li>
       <li>Fewer moving parts to deploy and monitor</li>
@@ -740,7 +741,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
     <div class="feature-card">
       <span class="feature-icon">📦</span>
       <h3>Durable storage</h3>
-      <p>Append-only WAL + bbolt index. Crash-safe: EpochQ replays the WAL on restart to restore all in-memory state exactly as it was.</p>
+      <p>Append-only WAL + bbolt index. Crash-safe: EpochQueue replays the WAL on restart to restore all in-memory state exactly as it was.</p>
     </div>
     <div class="feature-card">
       <span class="feature-icon">📊</span>
@@ -776,7 +777,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
 <section id="how-it-works">
   <p class="section-label">How it works</p>
   <h2 class="section-title">Min-Heap scheduling.<br>O(1) peek. Always.</h2>
-  <p class="section-sub">Traditional solutions poll the database every second. EpochQ knows exactly when the next message is due and sleeps until that moment.</p>
+  <p class="section-sub">Traditional solutions poll the database every second. EpochQueue knows exactly when the next message is due and sleeps until that moment.</p>
 
   <div class="how-grid">
     <div class="steps">
@@ -817,7 +818,7 @@ curl -X POST "http://localhost:8080/namespaces/payments/queues/reminders/message
           <span style="margin-left:8px">Go SDK</span>
           <span class="pill pill-go" style="margin-left:auto">Go</span>
         </div>
-        <div class="code-body"><span class="kw">import</span> <span class="str">"github.com/sneh-joshi/epochq/pkg/client"</span>
+        <div class="code-body"><span class="kw">import</span> <span class="str">"github.com/sneh-joshi/epochqueue/pkg/client"</span>
 
 c := client.New(<span class="str">"http://localhost:8080"</span>)
 
@@ -860,8 +861,8 @@ msgs, _ := c.Consume(ctx, <span class="str">"payments"</span>, <span class="str"
         <div class="qs-body">
           <h4>Clone &amp; start</h4>
           <div class="code-window">
-            <div class="code-body" style="padding:14px 16px;font-size:13px">git clone https://github.com/sneh-joshi/epochq
-cd epochq/docker
+            <div class="code-body" style="padding:14px 16px;font-size:13px">git clone https://github.com/sneh-joshi/epochqueue
+cd epochqueue/docker
 docker compose up -d</div>
           </div>
         </div>
@@ -894,7 +895,7 @@ docker compose up -d</div>
         <div class="qs-body">
           <h4>Add the Go SDK</h4>
           <div class="code-window">
-            <div class="code-body" style="padding:14px 16px;font-size:13px">go get github.com/sneh-joshi/epochq/pkg/client</div>
+            <div class="code-body" style="padding:14px 16px;font-size:13px">go get github.com/sneh-joshi/epochqueue/pkg/client</div>
           </div>
         </div>
       </div>
@@ -907,8 +908,8 @@ docker compose up -d</div>
           <span style="margin-left:8px">docker-compose.yml</span>
         </div>
         <div class="code-body"><span class="kw">services</span>:
-  <span class="fn">epochq</span>:
-    <span class="type">image</span>: epochq:latest  <span class="cmt"># local image until registry release</span>
+  <span class="fn">epochqueue</span>:
+    <span class="type">image</span>: epochqueue:latest  <span class="cmt"># local image until registry release</span>
     <span class="type">ports</span>:
       - <span class="str">"8080:8080"</span>   <span class="cmt"># API + dashboard</span>
       - <span class="str">"9090:9090"</span>   <span class="cmt"># Prometheus metrics</span>
@@ -916,7 +917,7 @@ docker compose up -d</div>
       - <span class="str">./data:/data</span>
       - <span class="str">./config.yaml:/config.yaml</span>
     <span class="type">environment</span>:
-      - EPOCHQ_AUTH_API_KEY=<span class="str">your-secret</span></div>
+      - EPOCHQUEUE_AUTH_API_KEY=<span class="str">your-secret</span></div>
       </div>
 
       <div style="margin-top:16px" class="code-window">
@@ -924,10 +925,10 @@ docker compose up -d</div>
           <div class="dot-row"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
           <span style="margin-left:8px">Or build from source</span>
         </div>
-        <div class="code-body">git clone https://github.com/sneh-joshi/epochq
-cd epochq
-go build -o epochq ./cmd/server
-./epochq --config config.yaml</div>
+        <div class="code-body">git clone https://github.com/sneh-joshi/epochqueue
+cd epochqueue
+go build -o epochqueue ./cmd/server
+./epochqueue --config config.yaml</div>
       </div>
     </div>
   </div>
@@ -1042,7 +1043,7 @@ go build -o epochq ./cmd/server
         <tr>
           <td>Maximum connections</td>
           <td colspan="2" class="ok" style="text-align:center">~65,000 TCP</td>
-          <td class="muted">OS ulimit — not an EpochQ limit.</td>
+          <td class="muted">OS ulimit — not an EpochQueue limit.</td>
         </tr>
         <tr>
           <td>In-memory index @ 10 GB RAM</td>
@@ -1092,14 +1093,14 @@ go build -o epochq ./cmd/server
 <section style="text-align:center;padding:80px 5%">
   <p class="section-label" style="text-align:center">Open source</p>
   <h2 class="section-title" style="max-width:560px;margin:0 auto 14px">MIT licensed. Community driven.</h2>
-  <p class="section-sub" style="margin:0 auto 36px">EpochQ is fully open source. Contributions, bug reports, and feature discussions are welcome.</p>
+  <p class="section-sub" style="margin:0 auto 36px">EpochQueue is fully open source. Contributions, bug reports, and feature discussions are welcome.</p>
   <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-    <a class="btn btn-primary" href="https://github.com/sneh-joshi/epochq">
+    <a class="btn btn-primary" href="https://github.com/sneh-joshi/epochqueue">
       <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       Star on GitHub
     </a>
-    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochq/blob/main/CONTRIBUTING.md">Contributing Guide</a>
-    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochq/tree/main/docs">Documentation</a>
+    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochqueue/blob/main/CONTRIBUTING.md">Contributing Guide</a>
+    <a class="btn btn-ghost" href="https://github.com/sneh-joshi/epochqueue/tree/main/docs">Documentation</a>
   </div>
   <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
     <span class="pill pill-go">Go 1.24</span>
@@ -1111,38 +1112,38 @@ go build -o epochq ./cmd/server
 <hr class="divider">
 <footer>
   <div class="footer-brand">
-    <h3>⏱ EpochQ</h3>
+    <h3>⏱ EpochQueue</h3>
     <p>The queue that replaces your cron jobs. Self-hostable. Zero dependencies. Production-ready.</p>
   </div>
   <div class="footer-links">
     <h5>Docs</h5>
     <ul>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/docs/getting-started.md">Getting Started</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/docs/api-reference.md">API Reference</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/docs/architecture.md">Architecture</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/CHANGELOG.md">Changelog</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/docs/getting-started.md">Getting Started</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/docs/api-reference.md">API Reference</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/docs/architecture.md">Architecture</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/CHANGELOG.md">Changelog</a></li>
     </ul>
   </div>
   <div class="footer-links">
     <h5>Community</h5>
     <ul>
-      <li><a href="https://github.com/sneh-joshi/epochq">GitHub</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/issues">Issues</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/discussions">Discussions</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue">GitHub</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/issues">Issues</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/discussions">Discussions</a></li>
       <li><a href="CONTRIBUTING.md">Contributing</a></li>
     </ul>
   </div>
   <div class="footer-links">
     <h5>Legal</h5>
     <ul>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/LICENSE">MIT License</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a></li>
-      <li><a href="https://github.com/sneh-joshi/epochq/blob/main/SECURITY.md">Security Policy</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/LICENSE">MIT License</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a></li>
+      <li><a href="https://github.com/sneh-joshi/epochqueue/blob/main/SECURITY.md">Security Policy</a></li>
     </ul>
   </div>
 </footer>
 <div class="footer-bottom">
-  © 2026 EpochQ contributors — Released under the MIT License
+  © 2026 EpochQueue contributors — Released under the MIT License
 </div>
 
 <script>

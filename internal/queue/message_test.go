@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sneh-joshi/epochq/internal/queue"
+	"github.com/sneh-joshi/epochqueue/internal/queue"
 )
 
 func TestStatus_String(t *testing.T) {

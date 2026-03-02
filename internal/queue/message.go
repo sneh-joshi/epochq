@@ -1,4 +1,4 @@
-// Package queue defines the core queue logic for EpochQ.
+// Package queue defines the core queue logic for EpochQueue.
 //
 // Domain types (Message, Status) live in internal/types to break the import
 // cycle between the storage and queue packages. This file re-exports them as
@@ -6,7 +6,7 @@
 // any source changes.
 package queue
 
-import "github.com/sneh-joshi/epochq/internal/types"
+import "github.com/sneh-joshi/epochqueue/internal/types"
 
 // Re-export core domain types from the types package.
 // Using Go type aliases (=) so queue.Message IS types.Message — no conversion needed.
